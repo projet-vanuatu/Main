@@ -1,0 +1,125 @@
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/*Perso*/
+.bg-global{
+  background-color: #FFF3E5;
+}
+
+/* Navbar */
+
+/* The navigation menu */
+.myNavbar {
+  overflow: hidden;
+  background-color: #352109;
+}
+
+/* Navigation links */
+.myNavbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* The subnavigation menu */
+/* left */
+.subnav{
+  float: left;
+  overflow: hidden;
+}
+
+/* Subnav button */
+.subnav .subnavbtn {
+  font-size: 16px; 
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+/* Add a red background color to navigation links on hover */
+.myNavbar a:hover, .subnav:hover .subnavbtn {
+  background-color:#9C5402;
+}
+
+/* Style the subnav content - positioned absolute */
+.subnav-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color:#9C5402;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Style the subnav links */
+.subnav-content a {
+  float: left;
+  color: white;
+  text-decoration: none;
+}
+
+/* Add a grey background color on hover */
+.subnav-content a:hover {
+  background-color:#FDBA6D;
+  color: black;
+}
+
+/* When you move the mouse over the subnav container, open the subnav content */
+.subnav:hover .subnav-content {
+  display: block;
+}
+
+/* right */
+.subnav2{
+  float: right;
+  overflow: hidden;
+}
+
+/* Subnav button */
+.subnav2 .subnavbtn2 {
+  font-size: 16px; 
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.myNavbar a:hover, .subnav2:hover .subnavbtn2 {
+  background-color:#9C5402;
+}
+
+/* Subnav button */
+.subnav2 .subnavbtn3 {
+  font-size: 16px; 
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+/* Scroll Table */
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 720px;
+    overflow: auto;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+}
+
