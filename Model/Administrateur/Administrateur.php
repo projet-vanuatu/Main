@@ -913,7 +913,7 @@ function deleteSite($id){
 
 /* Administration */
 
-function insertEtudiantMultiple($file){
+function getCSV($file){  
     $row = 1;
     if (($handle = fopen($file['file']['tmp_name'], 'r')) !== FALSE) {
         $arrayCsv = array();
@@ -927,16 +927,237 @@ function insertEtudiantMultiple($file){
             }
         }
         fclose($handle);
-    }
-    
+    }    
     $arrayTrim = array();
     $cmp = 0;
     foreach($arrayCsv as $row){
         $arrayTrim[$cmp] = explode(';', $row);
         $cmp++;
     }
-    echo '<pre>';
-    var_dump($arrayTrim);
-    echo '</pre>';
+    return $arrayTrim;
+}
+
+function insertEtudiantMultiple($array, $idForm){
+    for($i=3;$i<=count($array)-1;$i++){
+        $mdp = generatePassword();
+        $nomEtudiant = $array[$i][2];
+        $prenomEtudiant = $array[$i][3];
+        $numEtudiant = $array[$i][5];
+        if(empty($numEtudiant)){
+            $numEtudiant = generateNumEtudiant();
+        }
+        InsererEtudiant($numEtudiant, $nomEtudiant, $prenomEtudiant, $idForm, $mdp);
+    }  
+}
+
+function generatePassword($length = 8){
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $count = mb_strlen($chars);
+    for ($i = 0, $result = ''; $i < $length; $i++) {
+        $index = rand(0, $count - 1);
+        $result .= mb_substr($chars, $index, 1);
+    }
+    return $result;    
+}
+
+function generateNumEtudiant(){
+    $db = dbConnect();
+    $stmt = $db->prepare("SELECT max(IdE) as id FROM ETUDIANT WHERE IdE like '9%';"); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    if(empty($res['id'])){
+        $idEtudiant = 90000000;
+    }else{
+        $idEtudiant = $res['id'] + 1;
+    }
+    return $idEtudiant;   
+}
+
+//Export etudiants (etudiants, formations, td)
+function getExportEtudiants(){
+    $db = dbConnect();
+    //Etudiant affecté dans une formation et un groupe de td
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF, g.NumGroupTD "
+            . "FROM ETUDIANT e, FORMATION f, GROUPE_TD g, APPARTIENT a "
+            . "WHERE e.IdF = f.IdF AND e.IdE = a.IdE AND a.IdGTD = g.IdGTD;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);   
+    //Etudiant sans formation (donc sans td)
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE "
+            . "FROM ETUDIANT e WHERE IdF IS NULL;"); 
+    $stmt->execute();
+    $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);    
+    //etudiant avec formation et sans td
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF "
+            . "FROM ETUDIANT e, FORMATION f "
+            . "WHERE e.IdF = f.IdF "
+            . "AND e.IdF IS NOT NULL "
+            . "AND e.IdE NOT IN (SELECT IdE FROM APPARTIENT);"); 
+    $stmt->execute();
+    $res3 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //Reconstitue les tableaux  
+    $header = array(array('Numéro étudiants', 'Nom', 'Prenom', 'Formation', 'Groupe TD'));
+    $dataToExport = array_merge($header, $res);
+    $dataToExport = array_merge($dataToExport, $res2);
+    $dataToExport = array_merge($dataToExport, $res3);
+    //export
+    export_data_to_csv($dataToExport, 'Etudiants');
+}
+
+//Export enseignants (enseignants, domaines)
+function getExportEnseignants(){
+    $db = dbConnect();
+    //Etudiant affecté dans une formation et un groupe de td
+    $stmt = $db->prepare("SELECT IdENS, PrenomENS, NomENS, TypeENS FROM ENSEIGNANT;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $header = array(array('Numéro enseignants', 'Nom', 'Prenom', 'Type enseignant'));
+    $dataToExport = array_merge($header, $res);
+    export_data_to_csv($dataToExport, 'Enseignants');
+}
+
+//Export formations et groupes de TD, UE et matières
+function getExportFormations(){
+    $db = dbConnect();
+    //Etudiant affecté dans une formation et un groupe de td
+    $stmt = $db->prepare("SELECT f.IntituleF, u.IntituleUE, m.IntituleM, m.TypeM, m.NbHeuresFixees, d.Intitule_domaine, ens.NomENS, ens.PrenomENS "
+            . "FROM FORMATION f, UNITE_ENSEIGNEMENT u, MATIERES m, DOMAINE d, ENSEIGNE en, ENSEIGNANT ens "
+            . "WHERE f.IdF = u.IdF AND u.IdUE = m.IdUE AND d.IdDomaine = m.IdDomaine AND m.NumM = en.NumM AND en.IdENS = ens.IdENS;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $header = array(array('Formation', 'Unité d\'enseignement', 'Matière', 'Type', 'Nombre d\'heures', 'Domaine', 'Nom enseignant', 'Prenom enseignant'));
+    $dataToExport = array_merge($header, $res);
+    export_data_to_csv($dataToExport, 'Formations');
+}
+
+//Exports matériels
+function getExportMateriels(){
+    $db = dbConnect();
+    //Matériel non affectés
+    $stmt = $db->prepare("SELECT NumSerie, TypeMat, Etat_fonctionnement FROM MATERIELS WHERE IdS IS NULL;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //Matériel affectés
+    $stmt = $db->prepare("SELECT m.NumSerie, m.TypeMat, m.Etat_fonctionnement, s.NomS, si.NomSITE FROM MATERIELS m, SALLE s, SITE si WHERE m.IdS = s.IdS AND s.IdSITE = si.IdSITE;"); 
+    $stmt->execute();
+    $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      
+    $header = array(array('Numéro de série', 'Type matériel', 'Etat', 'Nom salle', 'Nom site'));
+    $dataToExport = array_merge($header, $res);
+    $dataToExport = array_merge($dataToExport, $res2);
+    export_data_to_csv($dataToExport, 'Materiels');    
+}
+
+//Exports Séances (séances, classe, enseignant, salle, batiment, site, réservation(optionnel)
+function getExportSeances(){
+    $db = dbConnect();
+    //seances CM
+    //avec reservations
+    $stmt = $db->prepare("SELECT f.IntituleF, cm.NumGroupCM, s.DateSeance, s.Heure_debut, s.DureeS, m.IntituleM, e.NomENS, e.PrenomENS, sa.NomS, si.NomSITE "
+            . "FROM SEANCES s, SALLE sa, SITE si, RESERVER r, MATIERES m, DISPENSE d, MATERIELS mat, ENSEIGNANT e, GROUPE_CM cm, FORMATION f "
+            . "WHERE s.NumS = r.NumS AND r.IdMat = mat.IdMat AND s.NumS = d.NumS AND d.IdENS = e.IdENS AND s.NumM = m.NumM "
+            . "AND s.IdS = sa.IdS AND sa.IdSITE = si.IdSITE AND s.IdGCM = cm.IdGCM AND cm.IdF = f.IdF;");
+    $stmt->execute();
+    $reqCMRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //sans reservations
+    $stmt = $db->prepare("SELECT f.IntituleF, cm.NumGroupCM, s.DateSeance, s.Heure_debut, s.DureeS, m.IntituleM, e.NomENS, e.PrenomENS, sa.NomS, si.NomSITE "
+            . "FROM SEANCES s, SALLE sa, SITE si, MATIERES m, DISPENSE d, ENSEIGNANT e, GROUPE_CM cm, FORMATION f "
+            . "WHERE s.NumS = d.NumS AND d.IdENS = e.IdENS AND s.NumM = m.NumM "
+            . "AND s.IdS = sa.IdS AND sa.IdSITE = si.IdSITE AND s.IdGCM = cm.IdGCM AND cm.IdF = f.IdF;"); 
+    $stmt->execute();
+    $reqCMNotRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $arrayCM = array_merge($reqCMRes, $reqCMNotRes);
+    //Seances TD
+    //avec reservations
+    $stmt = $db->prepare("SELECT f.IntituleF, td.NumGroupTD, s.DateSeance, s.Heure_debut, s.DureeS, m.IntituleM, e.NomENS, e.PrenomENS, sa.NomS, si.NomSITE "
+            . "FROM SEANCES s, SALLE sa, SITE si, RESERVER r, MATIERES m, DISPENSE d, MATERIELS mat, ENSEIGNANT e, GROUPE_TD td, FORMATION f "
+            . "WHERE s.NumS = r.NumS AND r.IdMat = mat.IdMat AND s.NumS = d.NumS AND d.IdENS = e.IdENS AND s.NumM = m.NumM "
+            . "AND s.IdS = sa.IdS AND sa.IdSITE = si.IdSITE AND s.IdGTD = td.IdGTD AND td.IdF = f.IdF;");
+    $stmt->execute();
+    $reqTDRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //sans reservations
+    $stmt = $db->prepare("SELECT f.IntituleF, td.NumGroupTD, s.DateSeance, s.Heure_debut, s.DureeS, m.IntituleM, e.NomENS, e.PrenomENS, sa.NomS, si.NomSITE "
+            . "FROM SEANCES s, SALLE sa, SITE si, MATIERES m, DISPENSE d, ENSEIGNANT e, GROUPE_TD td, FORMATION f "
+            . "WHERE s.NumS = d.NumS AND d.IdENS = e.IdENS AND s.NumM = m.NumM "
+            . "AND s.IdS = sa.IdS AND sa.IdSITE = si.IdSITE AND s.IdGTD = td.IdGTD AND td.IdF = f.IdF;");
+    $stmt->execute();
+    $reqTDNotRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $arrayTD = array_merge($reqTDRes, $reqTDNotRes);
+    //Raccord
+    $header = array(array('Numéro de série', 'Type matériel', 'Etat', 'Nom salle', 'Nom site'));
+    $dataToExport = array_merge($header, $arrayCM);
+    $dataToExport = array_merge($dataToExport, $arrayTD);
+    export_data_to_csv($dataToExport, 'Seances');    
+}
+
+//Exports site (site, batiment, salles)
+function getExportSalles(){
+    $db = dbConnect();
+    //salle non éuipé
+    $stmt = $db->prepare("SELECT s.NomS, s.CapaciteS, s.Types, si.NomSITE FROM SITE si, SALLE s WHERE s.IdSITE = si.IdSITE;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //Salle équipé
+    $stmt = $db->prepare("SELECT s.NomS, s.CapaciteS, s.Types, si.NomSITE "
+            . "FROM SITE si, SALLE s, MATERIELS m WHERE s.IdSITE = si.IdSITE AND m.IdS = s.IdS;"); 
+    $stmt->execute();
+    $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);   
+    //Raccord
+    $header = array(array('Numéro de série', 'Type matériel', 'Etat', 'Nom salle', 'Nom site'));
+    $dataToExport = array_merge($header, $res);
+    $dataToExport = array_merge($dataToExport, $res2);
+    export_data_to_csv($dataToExport, 'Salles');  
+}
+
+//Sites
+function getExportSites(){
+    $db = dbConnect();
+    //salle non éuipé
+    $stmt = $db->prepare("SELECT NomSITE, NumRue, RueSite, Ville, BoitePostale FROM SITE;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $header = array(array('Numéro de série', 'Type matériel', 'Etat', 'Nom salle', 'Nom site'));
+    $dataToExport = array_merge($header, $res);
+    export_data_to_csv($dataToExport, 'Sites');
+}
+
+//Export réservations hors cours
+function getExportReservations(){
+    $db = dbConnect();
+    //salle non éuipé
+    $stmt = $db->prepare("SELECT a.NomA, e.IdENS, m.NumSerie, m.TypeMat, hc.DateResaHC, hc.HeureDebutResaHC, hc.DureeResaHC "
+            . "FROM RESERVERHORSCOURS hc, ENSEIGNANT e, MATERIELS m, ADMINISTRATION a "
+            . "WHERE hc.IdENS = e.IdENS AND hc.IdA = a.IdA AND m.IdMat = hc.IdMat;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $header = array(array('Numéro de série', 'Type matériel', 'Etat', 'Nom salle', 'Nom site'));
+    $dataToExport = array_merge($header, $res);
+    export_data_to_csv($dataToExport, 'Reservations');   
+}
+
+function export_data_to_csv($data,$filename='export',$delimiter = ';',$enclosure = '"'){    
+    // Tells to the browser that a file is returned, with its name : $filename.csv
+    header("Content-disposition: attachment; filename=$filename.csv");
+    // Tells to the browser that the content is a csv file
+    header("Content-Type: text/csv");
+
+    // I open PHP memory as a file
+    $fp = fopen("php://output", 'w');
+
+    // Insert the UTF-8 BOM in the file
+    fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+
+    // I add the array keys as CSV headers
+   fputcsv($fp, array_keys($header),$delimiter,$enclosure);
+   
+    // Add all the data in the file
+    for($i=0;$i<=count($data)-1;$i++){
+        fputcsv($fp, $data[$i], $delimiter, $enclosure);
+    }
+
+    // Close the file
+    fclose($fp);
+    
     die();
 }
+

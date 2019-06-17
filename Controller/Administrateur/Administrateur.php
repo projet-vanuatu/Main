@@ -344,13 +344,24 @@ function supprimerSite($params){
 /* Administration */
 
 function administration(){
-    renderView('administration');
+    modelLoader();
+    $arrayFormation = getFormations2();
+    renderView('administration', array('formations' => $arrayFormation));
 }
 
 function creerMultipleEtudiant(){
     modelLoader();
-//    var_dump($_FILES);
+    $idFormation = $_POST['idForm'];
+    $arrayCSV = getCSV($_FILES, $idFormation);
+    insertEtudiantMultiple($arrayCSV, $idFormation);
+    redirect(ADMIN, 'administration');
+}
+
+function export(){
+//    var_dump($_POST['choixExport']);
 //    die();
-    insertEtudiantMultiple($_FILES);
-    die();
+    modelLoader();
+    $export = "getExport" . ucfirst($_POST['choixExport']);
+    call_user_func($export);
+    redirect(ADMIN, 'administration');
 }
