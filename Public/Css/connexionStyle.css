@@ -1,5 +1,9 @@
-#PageConnexion{
-  background-color: #FFDBB3;
+.bg-global{
+    background-image: url("../Images/motifVanuatu.jpg");
+}
+
+.bg-global-gris{
+    background-image: url("../Images/motifVanuatuGris.jpg");    
 }
 
 /* Logging modal */
@@ -149,5 +153,4 @@
 
 #icon {
   width:60%;
-
 }

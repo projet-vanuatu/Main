@@ -34,11 +34,18 @@ function arrayAssocToIndex($data, $pattern, $len = 8){
     return $matches;
 }
 
+/*
+ * Fonction d'écriture du fichier log
+ * @param string $id
+ * @param string $nom
+ * @param string $prenom
+ * @param string $action
+ * @param string $idAction
+ */
 function writeLog($id = '', $nom = 'N/A', $prenom = 'N/A', $action = 'N/A', $idAction = 'N/A'){
-    $path = logFilePath();
+//    $path = logFilePath();
+    $path = './Logs/Log.txt';
     $file = fopen($path, 'a');
-    var_dump($file);
-    die();
     $ligne = $id . ' - ' . $nom . ' ' . $prenom . ' - a ' . $action . ' : ' . $idAction . '\n';
     fputs($file, $ligne);
     fclose($file);

@@ -358,8 +358,6 @@ function creerMultipleEtudiant(){
 }
 
 function export(){
-//    var_dump($_POST['choixExport']);
-//    die();
     modelLoader();
     $export = "getExport" . ucfirst($_POST['choixExport']);
     call_user_func($export);

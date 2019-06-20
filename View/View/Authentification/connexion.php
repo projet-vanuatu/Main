@@ -1,5 +1,5 @@
 <div class="wrapper fadeInDown">
-    <div id="formContent">
+    <div id="formContent" class="bg-global-gris">
         <!-- Icon -->
         <div class="fadeIn first">
             <img src="Public/Images/logo.JPG" id="icon" alt="User Icon" />

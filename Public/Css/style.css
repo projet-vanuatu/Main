@@ -4,18 +4,20 @@ body {
 
 /*Perso*/
 .bg-global{
-  background-color: #FFF3E5;
+    background-image: url("../Images/motifVanuatu.jpg");
+}
+
+.bg-global-gris{
+    background-image: url("../Images/motifVanuatuGris.jpg");    
 }
 
 /* Navbar */
 
-/* The navigation menu */
 .myNavbar {
   overflow: hidden;
-  background-color: #352109;
+  background-color: #502B01;
 }
 
-/* Navigation links */
 .myNavbar a {
   float: left;
   font-size: 16px;
@@ -25,14 +27,11 @@ body {
   text-decoration: none;
 }
 
-/* The subnavigation menu */
-/* left */
 .subnav{
   float: left;
-  overflow: hidden;
+  overflow: hidden;   
 }
 
-/* Subnav button */
 .subnav .subnavbtn {
   font-size: 16px; 
   border: none;
@@ -40,50 +39,46 @@ body {
   color: white;
   padding: 14px 16px;
   background-color: inherit;
-  font-family: inherit;
-  margin: 0;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */    
 }
 
-/* Add a red background color to navigation links on hover */
 .myNavbar a:hover, .subnav:hover .subnavbtn {
   background-color:#9C5402;
-}
-
-/* Style the subnav content - positioned absolute */
-.subnav-content {
-  display: none;
-  position: absolute;
-  left: 0;
-  background-color:#9C5402;
-  width: 100%;
-  z-index: 1;
-}
-
-/* Style the subnav links */
-.subnav-content a {
-  float: left;
-  color: white;
   text-decoration: none;
 }
 
-/* Add a grey background color on hover */
+.subnav-content{
+    display: none;
+    position: absolute;
+    background-color:#9C5402;
+    min-width: 175px;    
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;   
+}
+
+.subnav-content a{
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
 .subnav-content a:hover {
-  background-color:#FDBA6D;
   color: black;
 }
 
-/* When you move the mouse over the subnav container, open the subnav content */
 .subnav:hover .subnav-content {
   display: block;
 }
 
-/* right */
 .subnav2{
   float: right;
   overflow: hidden;
 }
 
-/* Subnav button */
 .subnav2 .subnavbtn2 {
   font-size: 16px; 
   border: none;
@@ -99,7 +94,6 @@ body {
   background-color:#9C5402;
 }
 
-/* Subnav button */
 .subnav2 .subnavbtn3 {
   font-size: 16px; 
   border: none;
@@ -109,6 +103,11 @@ body {
   background-color: inherit;
   font-family: inherit;
   margin: 0;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 
 /* Scroll Table */

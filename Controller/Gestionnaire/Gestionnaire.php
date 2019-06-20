@@ -4,28 +4,25 @@ function index(){
     renderView();
 }
 
+/*
+ * Groupe TD
+ */
+
 function gererAffectationTD($params = null){    
     modelLoader();
-    $arrayFormations = getFormations();
-    
+    $arrayFormations = getFormations();    
     isset($_POST['IdF']) ? $_SESSION['formation'] = $_POST['IdF'] : "";
-    isset($_POST['IdF']) ? $_SESSION['td'] = "" : "";
-    
-    if($_SESSION['formation'] != 0){
-        
+    isset($_POST['IdF']) ? $_SESSION['td'] = "" : "";   
+    if($_SESSION['formation'] != 0){     
         isset($_SESSION['formation']) ? $selectedFormation = $_SESSION['formation'] : $selectedFormation = "";
         isset($_SESSION['formation']) ? $arrayEtudiantNonAff = getEtudiantNonaffecté($_SESSION['formation']): $arrayEtudiantNonAff = array(); 
-
         $td = getGroupTD($_SESSION['formation']);
         !empty($td) ? $arrayGroupTD = arrayAssocToIndex($td, 'NumGroupTD', 5) : $arrayGroupTD = array(); 
-
-        isset($_POST['IdGTD']) ? $_SESSION['td'] = $_POST['IdGTD'] : "";
-        
+        isset($_POST['IdGTD']) ? $_SESSION['td'] = $_POST['IdGTD'] : "";     
         if($_SESSION['td'] != 0){
             isset($_SESSION['td']) && !empty($_SESSION['td']) ? $selectedTD = $_SESSION['td'] : $selectedTD = ""; 
             isset($_SESSION['td']) ? $arrayEtudiantTD = getEtudiantGroupTD($_SESSION['td']) : $arrayEtudiantTD = array();            
-        }
-        
+        }       
         renderView('gererAffectationTD', array('formations' => $arrayFormations, 'selectedFormation' => $selectedFormation,
                     'nonAff' => $arrayEtudiantNonAff, 'td' => $td, 'selectedTD' => $selectedTD, 'aff' => $arrayEtudiantTD));        
     }else{
@@ -38,6 +35,7 @@ function affecterEtudiant($params){
     if(!empty($params['id']) && !empty($params['td'])){
         modelLoader();
         addEtudiantTD($params['id'], $params['td']);
+        writeLog($_SESSION['id'], $_SESSION['nom'], $_SESSION['prenom'], 'Affecter TD', $params['id'].' - '.$params['td']);
     }
     redirect(GEST, 'gererAffectationTD');
 }
@@ -48,4 +46,53 @@ function desaffecterEtudiant($params){
         deleteEtduaintTD($params['id']);
     }
     redirect(GEST, 'gererAffectationTD');
+}
+
+/*
+ * Réservations
+ */
+
+function gererReservation(){
+    modelLoader();
+    $arrayReservations = RecupererReserver();
+    $arrayReservationsHC = RecupererReserverHorscours();
+    renderView('gererReservation', array('reservations' => $arrayReservations, 'reservationsHC' => $arrayReservationsHC, 'nom'  => $_SESSION['nom'], 
+            'prenom' => $_SESSION['prenom']));
+}
+
+function creerReservationHC(){
+    modelLoader();
+    if(!empty($_POST)){
+        
+    }
+    $arrayEnseignants = RecupererEnseignant();
+    renderView('creerReservationHC', array('enseignants' => $arrayEnseignants));
+}
+
+function modifierReservationHC(){
+    modelLoader();
+    renderView('creerReservationHC');
+}
+
+function supprimerReservationHC(){
+    modelLoader();
+    renderView('creerReservationHC');
+}
+
+function creerReservation(){
+    modelLoader();
+    $arrayEnseignants = RecupererEnseignant();
+    $arrayMateriels = RecupererMateriel();
+    $arrayMatieres = RecupererMatieres();
+    renderView('creerReservation', array('enseignants' => $arrayEnseignants, 'materiels' => $arrayMateriels, 'matieres' => $arrayMatieres));
+}
+
+function modifierReservation(){
+    modelLoader();
+    renderView('creerReservation');
+}
+
+function supprimerReservation(){
+    modelLoader();
+    renderView('creerReservation');
 }

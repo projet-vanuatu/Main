@@ -9,7 +9,7 @@
         <title>Page de connexion</title>
     </head>
         
-    <body>
+    <body class="bg-global">
     	<?php 
             echo $content;
         ?>

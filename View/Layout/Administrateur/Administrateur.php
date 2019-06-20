@@ -10,7 +10,7 @@
         <title><?php echo $title; ?></title>
     </head>
         
-    <body>
+    <body class="bg-global">
         <div class="myNavbar">
             <div class="navbar-header">
                 <img src="Public/Images/logo.JPG" style="width:52px;" alt=""/>
