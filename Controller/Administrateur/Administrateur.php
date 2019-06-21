@@ -58,7 +58,7 @@ function gererFormation(){
  *  Utilisateurs
  */
 
-function creerUtilisateur($data){
+function creerUtilisateur($data = null){
     modelLoader(); 
     $arrayFormationS = getFormations2();
     $arrayDomaines = getDomaines();
@@ -69,30 +69,45 @@ function creerUtilisateur($data){
     }
     if(!empty($_POST)){
         if($data['type'] == 'etudiant'){
-            InsererEtudiant($_POST['IdE'], $_POST['NomE'], $_POST['PrenomE'],
-                    $_POST['IdF'], $_POST['MdpE']);
+            $done = InsererEtudiant($_POST['IdE'], $_POST['NomE'], $_POST['PrenomE'], $_POST['IdF'], $_POST['MdpE']);
             $pageActive = 'etudiants';
+            if(!$done){
+                renderView('creerUtilisateur', array('formations' => $arrayFormationS,
+                        'domaines' => $arrayDomaines, 'active' => $pageActive, 'error' => 'Numéro d\'étudiant déjà utilisé', 'formulaire' => $_POST));
+            }
         }elseif($data['type'] == 'enseignant'){
-            InsererEnseignant($_POST['IdEns'], $_POST['MdpEns'], $_POST['NomEns'],
+            $done = InsererEnseignant($_POST['IdEns'], $_POST['MdpEns'], $_POST['NomEns'],
                     $_POST['PrenomEns'], $_POST['TypeEns'], $_POST['IdDomaine']);
             $pageActive = 'enseignants';
+            if(!$done){
+                renderView('creerUtilisateur', array('formations' => $arrayFormationS,
+                        'domaines' => $arrayDomaines, 'active' => $pageActive, 'error' => 'Numéro d\'enseignant déjà utilisé', 'formulaire' => $_POST));
+            }
         }else if($data['type'] == 'admin'){
-            InsererAdminGest($_POST['IdA'], $_POST['NomA'], $_POST['PrenomA'],
+            $done = InsererAdminGest($_POST['IdA'], $_POST['NomA'], $_POST['PrenomA'],
                     $_POST['StatutA'], $_POST['MdpA']);
             $pageActive = 'gestionnaires';
+            if(!$done){
+                renderView('creerUtilisateur', array('formations' => $arrayFormationS,
+                        'domaines' => $arrayDomaines, 'active' => $pageActive, 'error' => 'Numéro d\'administrateur et/ou gestionnare déjà utilisé', 'formulaire' => $_POST));
+            }
         }
         redirect(ADMIN, 'creerUtilisateur', array('activeParams' => $pageActive));
     }
-    renderView('creerUtilisateur', array('formations' => $arrayFormationS, 'type' => $typeUtilisateur,
-        'domaines' => $arrayDomaines, 'active' => $pageActive));    
+    renderView('creerUtilisateur', array('formations' => $arrayFormationS,
+            'domaines' => $arrayDomaines, 'active' => $pageActive));    
 }
 
 function modifierUtilisateur($params){
     modelLoader();
     if(!empty($_POST)){
         if($params['type'] == 'etudiant'){
-            modifierEtudiant($_POST['Mdp'], $_POST['IdE'], $_POST['NomE'], $_POST['PrenomE'], $_POST['IdF']);
+            $done = modifierEtudiant($_POST['MdpE'], $_POST['IdE'], $_POST['NomE'], $_POST['PrenomE'], $_POST['IdF'], $_POST['oldIdE']);
             $pageActive = 'etudiants';
+            if(!$done){
+                renderView('creerUtilisateur', array('formations' => $arrayFormationS, 'type' => $typeUtilisateur,
+                        'domaines' => $arrayDomaines, 'active' => $pageActive, 'error' => 'Numéro d\'étudiant déjà utilisé', 'formulaire' => $_POST));
+            }
         }elseif($params['type'] == 'enseignant'){
             modifierEnseignant($_POST['MdpEns'], $_POST['IdEns'], $_POST['NomEns'], $_POST['PrenomEns'], $_POST['TypeEns'], $_POST['IdDomaine']);
             $pageActive = 'enseignants';
@@ -134,8 +149,8 @@ function supprimerUtilisateur($params){
     redirect(ADMIN, 'gererUtilisateur', $pageActive);
 }
 
-function gererUtilisateur($params){
-    if(isset($params['activeParams'])){
+function gererUtilisateur($params = null){
+    if(!is_null($params['activeParams'])){
         $pageActive = $params['activeParams'];
     }else{
         $pageActive = 'nothing';

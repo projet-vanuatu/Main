@@ -35,7 +35,8 @@ function affecterEtudiant($params){
     if(!empty($params['id']) && !empty($params['td'])){
         modelLoader();
         addEtudiantTD($params['id'], $params['td']);
-        writeLog($_SESSION['id'], $_SESSION['nom'], $_SESSION['prenom'], 'Affecter TD', $params['id'].' - '.$params['td']);
+        writeLog($_SESSION['id'], $_SESSION['nom'], $_SESSION['prenom'],
+                'Affecter TD', $params['id'].' - '.$params['td']);
     }
     redirect(GEST, 'gererAffectationTD');
 }
@@ -52,31 +53,44 @@ function desaffecterEtudiant($params){
  * Réservations
  */
 
-function gererReservation(){
+function gererReservation($params = null){
     modelLoader();
     $arrayReservations = RecupererReserver();
     $arrayReservationsHC = RecupererReserverHorscours();
-    renderView('gererReservation', array('reservations' => $arrayReservations, 'reservationsHC' => $arrayReservationsHC, 'nom'  => $_SESSION['nom'], 
-            'prenom' => $_SESSION['prenom']));
+    renderView('gererReservation', array('reservations' => $arrayReservations, 'reservationsHC' => $arrayReservationsHC,
+        'nom'  => $_SESSION['nom'], 'prenom' => $_SESSION['prenom'], 'active' => $params));
 }
 
 function creerReservationHC(){
     modelLoader();
     if(!empty($_POST)){
-        
+        insertReservationHC($_POST);
+        redirect(GEST, 'creerReservationHC');
     }
     $arrayEnseignants = RecupererEnseignant();
     renderView('creerReservationHC', array('enseignants' => $arrayEnseignants));
 }
 
-function modifierReservationHC(){
+function modifierReservationHC($params = null){
     modelLoader();
-    renderView('creerReservationHC');
+    if(!empty($_POST)){
+        updateReservationHC($_POST);
+//        insertReservationHC($_POST);
+        redirect(GEST, 'gererReservation', array("active" => 'hc'));
+    }
+    $formulaire = getReservationHC($params['id']);
+    $arrayEnseignants = RecupererEnseignant();
+//    supprimerReservationHC($params, 'modification');
+    renderView('creerReservationHC', array('formulaire' => $formulaire,
+        'enseignants' => $arrayEnseignants));
 }
 
-function supprimerReservationHC(){
+function supprimerReservationHC($params, $redirect = null){
     modelLoader();
-    renderView('creerReservationHC');
+    deleteReservationHC($params['id']);
+//    if(is_null($redirect)){
+       redirect(GEST, 'gererReservation', array("active" => 'hc')); 
+//    }   
 }
 
 function creerReservation(){

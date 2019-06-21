@@ -19,14 +19,6 @@
             <a href="index.php?action=index">Accueil</a>
             <a href="GestionPlanning.php">Gestion du planning</a>
             <a href="index.php?action=gererAffectationTD">Gestion groupes TD</a>
-<!--            <div class="subnav">
-                <button class="subnavbtn">Réservations &nbsp;<i class="fa fa-caret-down"></i></button>
-                <div class="subnav-content">
-                    <a href="index.php?action=gererReservation">Gérer réservations</a>
-                    <a href="index.php?action=creerReservation">Créer réservation</a>
-                    <a href="index.php?action=creerReservationHC">Créer réservation hors cours</a>
-                </div>
-            </div>-->
             <div class="subnav">
                 <button class="subnavbtn">Réservations &nbsp;<i class="fa fa-caret-down"></i></button>
                 <div class="subnav-content">
@@ -41,6 +33,14 @@
                     <a href="#company">Par formation</a>
                     <a href="#company">Par salle</a>
                     <a href="#company">Par enseignant</a>
+                </div>
+            </div>
+            <div class="subnav">
+                <button class="subnavbtn">Réservations dev &nbsp;<i class="fa fa-caret-down"></i></button>
+                <div class="subnav-content">
+                    <a href="index.php?action=gererReservation">Gérer réservations</a>
+                    <a href="index.php?action=creerReservation">Créer réservation</a>
+                    <a href="index.php?action=creerReservationHC">Créer réservation hors cours</a>
                 </div>
             </div>
             <div class="subnav2">

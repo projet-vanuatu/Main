@@ -1,13 +1,18 @@
 <?php
 
-require_once FPUBLIC.DS.'Core/Manager.php';
+require_once '../Core/Manager.php';
+require_once '../Core/Define.php';
 
-if(isset($_POST["debut"]) && !empty($_POST["debut"])){
-    if(isset($_POST["fin"]) && !empty($_POST["fin"])){
+if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
+        date_default_timezone_set(TIMEZONE);
+        $date = $_POST["date"];
         $debut = $_POST["debut"];
         $fin = $_POST["fin"];
-        $conn = dbConnect(); 
-        $sql1="SELECT DISTINCT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat
+        $debut = date("Y/m/d H:i:s", strtotime("$date $debut"));
+        $fin = date("Y/m/d H:i:s", strtotime("$date $fin"));
+       
+        $conn = dbConnect();  
+        $sql="SELECT DISTINCT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat
                FROM  MATERIELS
                WHERE MATERIELS.IdS IS NULL
                AND MATERIELS.Etat_fonctionnement='En marche'
@@ -43,20 +48,23 @@ if(isset($_POST["debut"]) && !empty($_POST["debut"])){
                                        SELECT RESERVERHORSCOURS.IdMat
                                        FROM RESERVERHORSCOURS
                                        WHERE  RESERVERHORSCOURS.DateDebutResaHC < '$debut'
-                                       AND RESERVERHORSCOURS.DateFinResaHC > '$fin'))";
-        $stmt = $conn->prepare($sql1); 
+                                       AND RESERVERHORSCOURS.DateFinResaHC > '$fin'))";       
+        $stmt = $conn->prepare($sql); 
         $stmt->execute();
         $res1 = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $resultat=$res1;    
-        $_SESSION['matdispoRHC']=$resultat;
-//        $_SESSION['matdispoRHC'] = 'aa';
-        if(isset($_SESSION['matdispoRHC'])){
-            print_r(utf8_encode(json_encode($_SESSION['matdispoRHC'])));
-            
+        $resultat = $res1;
+        if($_POST["reservation"] != -1){
+            $id = $_POST["reservation"];
+            $sql = "SELECT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat FROM MATERIELS, RESERVERHORSCOURS "
+                    . "WHERE MATERIELS.IdMat = RESERVERHORSCOURS.IdMat AND RESERVERHORSCOURS.IdResHC = $id;";
+            $stmt = $conn->prepare($sql); 
+            $stmt->execute();
+            $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultat = array_merge($resultat, $res2);
         }
-        
-//        print_r(utf8_encode(json_encode($resultat)));
-    }
+        $resultatReturn = $resultat;
+        $_SESSION['matdispoRHC'] = $resultatReturn;
+        if(isset($_SESSION['matdispoRHC'])){
+            print_r(utf8_encode(json_encode($_SESSION['matdispoRHC'])));            
+        }
 }
-
-//print_r(utf8_encode(json_encode($_SESSION['matdispoRHC'])));

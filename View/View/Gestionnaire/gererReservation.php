@@ -13,7 +13,7 @@
 <br>
 <div class="container">
     <br>
-    <div class="row" style="display:block;" id="searchR">
+    <div class="row" <?php echo (is_null($data['active'])) ? "style='display:block;'" : "style='display:none;'"; ?> id="searchR">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-6">
@@ -71,21 +71,17 @@
                                 <td><?php echo $data['reservations'][$i]['fin']; ?></td> 
                                 <?php
                                     $IdRes = $data['reservations'][$i]['IdRes'];
-                                    $IdENS = $data['reservations'][$i]['IdENS'];
-                                    $IdA = $data['reservations'][$i]['IdA'];
-                                    $IdMat = $data['reservations'][$i]['IdMat'];   
-                                    $NumS = $data['reservations'][$i]['NumS']; 
                                 ?>
                                 <td>
                                     <p> 
-                                        <a href="index.php?action=modifierReservation&IdRes=<?php echo $IdRes; ?>&IdENS=<?php echo $IdENS; ?>&IdA=<?php echo $IdA?>&IdMat=<?php echo $IdMat ?>&NumS=<?php echo $NumS ?>">
+                                        <a href="index.php?action=modifierReservation&id=<?php echo $IdRes; ?>">
                                         <button type="button" class="btn btn-warning">Modifier</button>
                                         </a>
                                     </p>
                                 </td>
                                 <td>
                                     <p>
-                                        <a href="index.php?action=supprimerReservation&IdRes=<?php echo $IdRes; ?>&IdENS=<?php echo $IdENS; ?>&IdA=<?php echo $IdA?>&IdMat=<?php echo $IdMat ?>&NumS=<?php echo $NumS ?>">
+                                        <a href="index.php?action=supprimerReservation&id=<?php echo $IdRes; ?>">
                                         <button type="button" class="btn btn-danger" >Supprimer</button>
                                         </a>
                                     </p>
@@ -100,7 +96,7 @@
             </div>
         </div>
     </div>
-    <div class="row" style="display:none" id="searchRHC">
+    <div class="row" <?php echo (!is_null($data['active'])) ? "style='display:block;'" : "style='display:none;'"; ?> id="searchRHC">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-6">
@@ -150,24 +146,18 @@
                                   <td><?php echo $data['reservationsHC'][$i]['heureF']; ?></td>
                                   <!-- RECUPERER DONNEES -->
                                   <?php
-                                  $IdENSHC = $data['reservationsHC'][$i]['IdENS'];
-                                  $IdAHC = $data['reservationsHC'][$i]['IdA'];
-                                  $IdMatHC = $data['reservationsHC'][$i]['IdMat'];   
                                   $IdResHC = $data['reservationsHC'][$i]['IdResHC'];   
-                                  $DateResaHC = utf8_encode($data['reservationsHC'][$i]['DateResaHC']);
-                                  $HeureDebutResaHC = $data['reservationsHC'][$i]['DateDebutResaHC'];
-                                  $DureeResaHC = $data['reservationsHC'][$i]['DateFinResaHC'];
                                   ?>
                                   <td>
                                       <p>
-                                          <a href="index.php?action=modifierReservationHC&IdResHC=<?php echo $IdResHC;?>&IdENSHC=<?php echo $IdENSHC; ?>&IdAHC=<?php echo $IdAHC?>&IdMatHC=<?php echo $IdMatHC ?>&DateResaHC=<?php echo $DateResaHC ?>&HeureDebutResaHC=<?php echo $HeureDebutResaHC ?>&DureeResaHC=<?php echo $DureeResaHC ?>">
+                                          <a href="index.php?action=modifierReservationHC&id=<?php echo $IdResHC; ?>">
                                               <button type="button" class="btn btn-warning">Modifier</button>
                                           </a>
                                       </p>
                                   </td>
                                   <td>
                                       <p>
-                                          <a href="index.php?action=supprimerReservationHC&IdResHC=<?php echo $IdResHC;?>&IdENSHC=<?php echo $IdENSHC; ?>&IdAHC=<?php echo $IdAHC?>&IdMatHC=<?php echo $IdMatHC ?>">
+                                          <a href="index.php?action=supprimerReservationHC&id=<?php echo $IdResHC; ?>">
                                               <button type="button" class="btn btn-danger" >Supprimer</button>
                                           </a>
                                       </p>

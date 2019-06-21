@@ -15,8 +15,16 @@ function redirect($controller = null, $action = null, $args = array()){
     if(!empty($args)){
         $str = '';
         foreach($args as $key=>$value){
+            $strPush = '';
             if($key !== 'action'){
-                $str = $str.'&'.$key.'='.$value;
+                if(is_array($value)){
+                    foreach($value as $subKey=>$subValue){
+                        $strPush = $strPush.'&'.$subKey.'='.$subValue;
+                    }
+                }else{
+                   $strPush = $key.'='.$value; 
+                }
+                $str = $str.'&'.$strPush;
             }      
         }
         $location = "index.php?action=" . $action . $str;
@@ -32,14 +40,16 @@ function redirect($controller = null, $action = null, $args = array()){
  * @param array $data : données transmits à la vue
  * @param string $title : titre de la page
  */ 
-function renderView($action = 'index', $data = array(), $title = 'Intranet Faculté du Vanuatu'){
+function renderView($action = 'index', $data = array(), $title = 'Intranet Faculté du Vanuatu', $layout = null){
     extract($data);
     ob_start();
     require_once(FPUBLIC.DS.'View/View/'. ucfirst($_SESSION['request']['controller']) .DS. $action . '.php');
     $content = ob_get_clean();
     ob_end_clean();
-    //ob_clean();
-    require_once(FPUBLIC.DS.'View/Layout/'.$_SESSION['request']['layout'].'/'.$_SESSION['request']['layout'].'.php');
+    if(is_null($layout)){
+        $layout = $_SESSION['request']['layout'];
+    }
+    require_once(FPUBLIC.DS.'View/Layout/'.$layout.'/'.$layout.'.php');
 }
 
 /*

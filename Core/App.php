@@ -13,8 +13,6 @@ require_once FPUBLIC.DS.'Config/Config.php';
  * Fonction qui redirige sur le controller et l'action demandée
  */
 function dispatcher(){
-//    var_dump($_SESSION);
-//    die();
     //Si l'utilisateur est connecté et ne veux pas se deconnecter
     if(isset($_SESSION['id'])){
         $action = $_GET['action'];

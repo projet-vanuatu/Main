@@ -1,115 +1,165 @@
 <?php
-if(!empty($_GET['IdResHC'])){
-    $IdResHC = $_GET['IdResHC'];
-    $IdENSHC = $_GET['IdENSHC'];
-    $IdAHC = '21100905';
-    $IdMatHC = $_GET['IdMatHC'];
-    $DateResaHC = $_GET['DateResaHC'];
-    $HeureDebutResaHC = $_GET['HeureDebutResaHC'];
-    $DureeResaHC = $_GET['DureeResaHC'];
+if(isset($data['formulaire'])){
+    date_default_timezone_set(TIMEZONE);
+    $IdResHC = $data['formulaire']['IdResHC'];
+    $IdENSHC = $data['formulaire']['IdEns'];
+    $IdMatHC = $data['formulaire']['IdMat'];
+    $IdA = $data['formulaire']['IdA'];
+    $dateToChange = $data['formulaire']['DateDebutResaHC'];
+    $Date = date("Y-m-d", strtotime($dateToChange));
+    $heureDebutCh = $data['formulaire']['DateDebutResaHC'];
+    $HeureDebut = date("H:i:s", strtotime($heureDebutCh));
+    $dateFinCh = $data['formulaire']['DateFinResaHC'];
+    $HeureFin = date("H:i:s", strtotime($dateFinCh));
     $action = 'index.php?action=modifierReservationHC';
     $action2 = 'modifier';
     $btn = 'Modifier';
-    $MatSelect = IdMatSelect($IdMatHC);
-    $MatDispoHC =  MatDispoHC($HeureDebutResaHC , $DureeResaHC);
+    $btnNav = 'Retour';
 }else{ 
     $IdResHC = "";
     $IdENSHC = "";
-    $IdAHC ="";
     $IdMatHC="";
-    $DateResaHC = "";
-    $HeureDebutResaHC = "";
-    $DureeResaHC = "";
+    $Date = "";
+    $HeureDebut = "";
+    $HeureFin = "";
     $action= 'index.php?action=creerReservationHC';
     $action2 = 'creer';
     $btn = 'Ajouter';
     $MatSelect ="";
+    $btnNav = 'Retour';
 }
 ?>
 <script>
     function change_valeurM(){
-        var select = document.getElementById('debut').value;
-        var select2 = document.getElementById('fin').value;
-        var test = AjaxM(select, select2);
-        var listeMat = '<select class="form-control" id="mat" name="IdMatHC" required><option value="">Choisir un matériel</option>';
-        $.each($.parseJSON(test), function(i, obj) {
-            listeMat += '<option value='+obj.IdMat+'>n°: '+obj.numSerie+' '+obj.TypeMat+'</option>';
-        }); 
-        listeMat += '</select>';
-        document.getElementById('Mat').innerHTML = listeMat;
-        console.log(test);
+        var date =  document.getElementById('date').value;
+        var dateDebut = document.getElementById('debut').value;
+        var dateFin = document.getElementById('fin').value;
+        var reservation = document.getElementById('materielReserver').value;
+        var ajaxDone = false;
+        if(date && dateDebut && dateFin){
+            var test = AjaxM(date, dateDebut, dateFin, reservation);         
+            var listeMat = '<label for="choixMat">Matériel :</label><select class="form-control" id="choixMat" name="IdMatHC" required><option value="">Choisir un matériel</option>';
+            $.each($.parseJSON(test), function(i, obj) {
+                listeMat += '<option value='+obj.IdMat+'>n°: '+obj.numSerie+' '+obj.TypeMat+'</option>';
+            }); 
+            listeMat += '</select>';
+            document.getElementById('Mat').innerHTML = listeMat;
+            ajaxDone = true;
+        }
+        return ajaxDone;
     }
-    function AjaxM(select, select2){
+    function AjaxM(date, debut, fin, reservation){
         return $.ajax({
             url:'Ajax/materielReservationHC.php',
             type:'POST',
-            data:{debut:select, fin:select2},
+            data:{date:date, debut:debut, fin:fin, reservation:reservation},
             async: false
         }).responseText;
     }
+    function preSelection(){
+        var valeur = document.getElementById('preValue').value;
+        if(valeur !== ''){
+            var options = document.getElementById('choixMat').options;
+            var longueur = options.length
+            for(var i=0;i<=longueur-1;i++){
+                if(options[i].value === valeur){
+                    options[i].selected= true;
+                    break;
+                }
+            }           
+        }
+    }
 </script>
+<br>
+<br>
 <div class="container">
+    <div class="row">
+        <div class="col-sm-10" <?php echo ($action2 == 'modifier') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php?action=creerReservation">Créer réservation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php?action=creerReservationHC">Créer réservation hors séances</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-2">
+            <a href="index.php?action=gererReservation&active=hc">
+                <button type="button" class="btn btn-primary"><?php echo $btnNav; ?></button>
+            </a>            
+        </div>
+    </div>
+</div>
+<div class="container">
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <h2><center><?php echo $btn." une réservation hors séances"; ?></center></h2>
+            </div>           
+            <div class="col-sm-3">
+
+            </div>
+        </div>
+    </div>
     <br>
     <div class="row content">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <br>
-            <h4>Insertion d'une réservation hors séance</h4>
-            <br>
-            <form action="<?php echo $action; ?>" method="POST">
-                    <?php 
-                        echo ($action2 == 'modifier') ? "<input type='hidden' name='IdResHC' value='$IdResHC'>" : ""; 
-                    ?>
+            <form name="reservationHC" action="<?php echo $action; ?>" method="POST">
+                <?php
+                    echo ($action2 == 'modifier') ? "<input type='hidden' id='materielReserver' name='IdResHC' value='$IdResHC'>" :
+                            "<input type='hidden' id='materielReserver' name='IdResHC' value='-1'>";
+                    echo "<input type='hidden' id='preValue' name='preValue' value='$IdMatHC'>";
+                ?>
                 <div class="form-group">                  
                     <label for="pwd">Enseignant :</label>                        
-                    <select <?php if($action2 == 'modifier'){ echo 'disabled';}?> class="form-control" id="typeSalle" name="IdENSHC" required>
+                    <select class="form-control" id="typeSalle" name="IdENSHC" required>
                         <option value="">Choisir un enseignant</option>
                             <?php 
-                                for ($i=0;$i<=count($data['enseignants'])-1;$i++){
+                            for ($i=0;$i<=count($data['enseignants'])-1;$i++){
                             ?>
-                                    <option <?php if($IdENSHC == $data['enseignants'][$i]['IdENS']){ echo 'Selected';}?> value="<?php echo $data['enseignants'][$i]['IdENS']?>"><?php echo utf8_encode($data['enseignants'][$i]['NomENS']." ".$data['enseignants'][$i]['PrenomENS'])?></option>
-                            <?php
-                                }
-                            ?>
-                    </select>
-                     <input <?php if($action2 != 'modifier'){ echo 'disabled';}?> hidden value ="<?php echo  $resENS[$i]['IdENS'] ?>" name ='IdENSHC'>
-                </div>
-                 <div class="form-group">
-                    <span>
-                        <label for="pwd">Début de réservation :<p style="color: #ff8533; font-style: italic">Format : YYYY-MM-DD hh:mm:ss </p></label>
-                        <input   <?php if($action2 == 'modifier'){ echo 'disabled';}?> onkeyup="change_valeurM()" type="text" class="form-control" id="debut" placeholder="ex : 2019-06-14 08:30:00" name="HeureDebutResaHC" value='<?php echo $HeureDebutResaHC?>' required>
-                     <input <?php if($action2 != 'modifier'){ echo 'disabled';}?> hidden value ="<?php echo $HeureDebutResaHC?>" name ='HeureDebutResaHC'>
-                    </span>
-
-                </div>
-                <div class="form-group">
-                    <label for="pwd">Fin de réservation :<p style="color: #ff8533; font-style: italic">Format : YYYY-MM-DD hh:mm:ss</p></label>
-                    <input   <?php if($action2 == 'modifier'){ echo 'disabled';}?> onkeyup="change_valeurM()" type="text" class="form-control" id="fin" placeholder="ex : 2019-06-14 11:00:00" name="DureeResaHC" value='<?php echo $DureeResaHC?>' required>
-                    <input <?php if($action2 != 'modifier'){ echo 'disabled';}?> hidden value ="<?php echo $DureeResaHC?>" name ='DureeResaHC'>
-                </div> 
-                <div class="form-group" id="Mat">
-                    <label for="pwd">Matériel :</label>                        
-                    <select class="form-control" id="typeSalle" name="IdMatHC" required>
-                        <option value="">Choisir un matériel</option>
-                        <?php 
-                        if($action2 == 'modifier'){
-                            for ($i=0;$i<=count($MatSelect)-1;$i++){
-                        ?>
-                                <option Selected  value="<?php echo  $IdMatHC?>"><?php echo  utf8_encode($MatSelect[$i]['numSerie'])."  ". utf8_encode( $MatSelect[$i]['TypeMat'])?></option>;
+                                <option <?php if($IdENSHC == $data['enseignants'][$i]['IdENS']){echo 'Selected';}?> 
+                                    value="<?php echo $data['enseignants'][$i]['IdENS']?>">
+                                        <?php echo utf8_encode($data['enseignants'][$i]['NomENS']." ".$data['enseignants'][$i]['PrenomENS'])?></option>
                             <?php
                             }
-                            for ($i=0;$i<=count($MatDispoHC)-1;$i++){
                             ?>
-                                <option   value="<?php echo $MatDispoHC[$i]['IdMat']?>"><?php echo utf8_encode($MatDispoHC[$i]['numSerie']." ".$MatDispoHC[$i]['TypeMat'])?></option>
-                        <?php
-                            }                            
-                        }
-                        ?>
                     </select>
-                </div>    
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Date de réservation :</label>
+                    <input class="form-control" name="date" id="date" type="date" name="dateReservation" onchange="change_valeurM();" required
+                           value="<?php echo ($Date != "") ? $Date : "" ; ?>">
+                </div>              
+                <div class="form-group">
+                    <label for="pwd">Date de réservation :</label>
+                    <input class="form-control" name="debut" id="debut" type="time" name="heureDebut" min="07:00" max="21:00" step="1800" 
+                           onchange="change_valeurM();" required value="<?php echo ($HeureDebut != "") ? $HeureDebut : "" ; ?>">
+                </div>               
+                <div class="form-group">
+                    <label for="pwd">Date de réservation :</label>
+                    <input class="form-control" name="fin" id="fin" type="time" name="heureFin" min="07:00" max="21:00" step="1800" 
+                           onchange="change_valeurM();" required value="<?php echo ($HeureFin != "") ? $HeureFin : "" ; ?>">
+                </div>                         
+                <div class="form-group" id="Mat">
+                    <label for="choixMat">Matériel :</label>                        
+                    <select class="form-control" id="choixMat" name="IdMatHC" required>
+                        <option value="">Choisir un matériel</option>
+                    </select>
+                </div>               
                 <button type="submit" class="btn btn-primary btn-block"><?php echo $btn; ?></button>
             </form>      
         </div>
         <div class="col-sm-4"></div>
     </div>
-</div> 
+</div>
+<script type="text/javascript">
+//    change_valeurM();
+    var changer = change_valeurM();
+    if(changer){
+       preSelection(); 
+    } 
+</script>

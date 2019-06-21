@@ -285,34 +285,32 @@ function getDomaines(){
 
 function getEnseignant($IdEns){
     $conn = dbConnect();
-    $sql = "SELECT e.IdEns, e.NomEns , e.PrenomEns , e.TypeEns , c.Mdp , d.Intitule_domaine
-        FROM ENSEIGNANT e , CODES c , DOMAINE d , SPECIALISER s
-        WHERE e.IdMdp=c.IdMdp
-        AND d.IdDomaine=s.IdDomaine
-        AND e.IdEns=s.IdEns
-        AND e.IdEns ='$IdEns'";
+    $sql = "SELECT e.IdEns, e.NomEns, e.PrenomEns, e.TypeEns, c.Mdp as MdpEns, d.Intitule_domaine, d.IdDomaine "
+            . "FROM ENSEIGNANT e, CODES c, DOMAINE d, SPECIALISER s "
+            . "WHERE e.IdMdp = c.IdMdp AND d.IdDomaine = s.IdDomaine "
+            . "AND e.IdEns = s.IdEns AND e.IdEns = '$IdEns';";
    $stmt = $conn->prepare($sql); 
    $stmt->execute();
-   $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-   return $res[0];
+   $res = $stmt->fetch(PDO::FETCH_ASSOC);
+   return $res;
 }
 
 function getEtudiant($IdE){
      $conn = dbConnect();
-     $sql = "SELECT e.IdE, e.NomE , e.PrenomE, e.IdF , c.Mdp FROM ETUDIANT e , CODES c WHERE e.IdMdp=c.IdMdp AND e.IdE ='$IdE'";
+     $sql = "SELECT e.IdE, e.NomE , e.PrenomE, e.IdF , c.Mdp as MdpE FROM ETUDIANT e , CODES c WHERE e.IdMdp=c.IdMdp AND e.IdE ='$IdE'";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
-    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $res[0];
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res;
 }
 
 function getAdmin ($IdA){
     $conn = dbConnect();
-    $sql = "SELECT a.IdA, a.NomA , a.PrenomA, a.StatutA , c.Mdp FROM ADMINISTRATION a , CODES c WHERE a.IdMdp=c.IdMdp AND a.IdA ='$IdA'";
+    $sql = "SELECT a.IdA, a.NomA , a.PrenomA, a.StatutA , c.Mdp as MdpA FROM ADMINISTRATION a , CODES c WHERE a.IdMdp=c.IdMdp AND a.IdA ='$IdA'";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
-    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $res[0];
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res;
 }
 
 function getMdp($attr, $table, $criteria, $value){
@@ -326,48 +324,65 @@ function getMdp($attr, $table, $criteria, $value){
 }
 
 //  --- Insertion etudiant --- //
-function InsererEtudiant($IdE,$NomE,$PrenomE,$IdF,$MdpE) {   
-    $cx = bdConnect();
-    $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpE');";
-    $queryInsererMdp = mysqli_query($cx,$InsererMdp);
-    if($queryInsererMdp){ 
-        $IdMdpE = getLastID('IdMdp', 'CODES');
-        if($IdF != ""){
-            $IdGCM = getIdGcm($IdF);
-            $InsererEtudiant = "INSERT INTO ETUDIANT (IdE ,NomE, PrenomE,IdGCM,IdF,IdMdp) values ('$IdE','$NomE','$PrenomE','$IdGCM','$IdF','$IdMdpE');";            
-        }else{
-            $InsererEtudiant = "INSERT INTO ETUDIANT (IdE ,NomE, PrenomE,IdGCM,IdF,IdMdp) values ('$IdE','$NomE','$PrenomE', NULL , NULL ,'$IdMdpE');";
+function InsererEtudiant($IdE,$NomE,$PrenomE,$IdF,$MdpE) {
+    $exist = getEtudiant($IdE);
+    if(!$exist){
+        $cx = bdConnect();
+        $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpE');";
+        $queryInsererMdp = mysqli_query($cx,$InsererMdp);
+        if($queryInsererMdp){ 
+            $IdMdpE = getLastID('IdMdp', 'CODES');
+            if($IdF != ""){
+                $IdGCM = getIdGcm($IdF);
+                $InsererEtudiant = "INSERT INTO ETUDIANT (IdE ,NomE, PrenomE,IdGCM,IdF,IdMdp) values ('$IdE','$NomE','$PrenomE','$IdGCM','$IdF','$IdMdpE');";            
+            }else{
+                $InsererEtudiant = "INSERT INTO ETUDIANT (IdE ,NomE, PrenomE,IdGCM,IdF,IdMdp) values ('$IdE','$NomE','$PrenomE', NULL , NULL ,'$IdMdpE');";
+            }
+            mysqli_query($cx,$InsererEtudiant);
         }
-        mysqli_query($cx,$InsererEtudiant);
+        return true;
+    }else{
+        return false;
     }
+
 }
 
 // --- Insertion enseignant --- //
 function InsererEnseignant($IdEns,$MdpEns,$NomEns,$PrenomEns,$TypeEns,$IdDomaine) {
-    $cx = bdConnect();
-    $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpEns');";
-    $queryInsererMdp = mysqli_query($cx,$InsererMdp);
-    if($queryInsererMdp){
-        $IdMdpEns = getLastID('IdMdp', 'CODES');
-        $InsererEnseignant = "INSERT INTO ENSEIGNANT (IdENS , PrenomENS,NomENS,TypeENS,IdMdp) values ('$IdEns','$PrenomEns','$NomEns','$TypeEns','$IdMdpEns')";
-        $queryInsererEnseignant = mysqli_query($cx,$InsererEnseignant);
-        if($queryInsererEnseignant){
-            $InsererDomaine ="INSERT INTO SPECIALISER (IdENS,IdDomaine) values ('$IdEns','$IdDomaine')";
-            $queryInsererDomaine = mysqli_query($cx,$InsererDomaine);
+    $exist = getEnseignant($IdEns);
+    if(!$exist){
+        $cx = bdConnect();
+        $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpEns');";
+        $queryInsererMdp = mysqli_query($cx,$InsererMdp);
+        if($queryInsererMdp){
+            $IdMdpEns = getLastID('IdMdp', 'CODES');
+            $InsererEnseignant = "INSERT INTO ENSEIGNANT (IdENS , PrenomENS,NomENS,TypeENS,IdMdp) values ('$IdEns','$PrenomEns','$NomEns','$TypeEns','$IdMdpEns')";
+            $queryInsererEnseignant = mysqli_query($cx,$InsererEnseignant);
+            if($queryInsererEnseignant){
+                $InsererDomaine ="INSERT INTO SPECIALISER (IdENS,IdDomaine) values ('$IdEns','$IdDomaine')";
+                $queryInsererDomaine = mysqli_query($cx,$InsererDomaine);
+            }
         }
-    }          
+        return true;
+    }
+    return false;
 }
 
 // --- Insertion admin --- //
-function InsererAdminGest($IdA,$NomA,$PrenomA,$StatutA,$MdpA) {  
-    $cx = bdConnect();
-    $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpA');";
-    $queryInsererMdp = mysqli_query($cx,$InsererMdp);
-    if($queryInsererMdp){   
-        $IdMdpA = getLastID('IdMdp', 'CODES');
-        $InsererAdmin = "INSERT INTO ADMINISTRATION (IdA ,NomA, PrenomA,StatutA,IdMdp) values ('$IdA','$NomA','$PrenomA','$StatutA','$IdMdpA')";
-        $queryInsererAdmin = mysqli_query($cx,$InsererAdmin); 
+function InsererAdminGest($IdA,$NomA,$PrenomA,$StatutA,$MdpA){
+    $exist = getAdmin($IdA);
+    if(!$exist){
+        $cx = bdConnect();
+        $InsererMdp ="INSERT INTO CODES (IdMdp, Mdp) VALUES (NULL, '$MdpA');";
+        $queryInsererMdp = mysqli_query($cx,$InsererMdp);
+        if($queryInsererMdp){   
+            $IdMdpA = getLastID('IdMdp', 'CODES');
+            $InsererAdmin = "INSERT INTO ADMINISTRATION (IdA ,NomA, PrenomA,StatutA,IdMdp) values ('$IdA','$NomA','$PrenomA','$StatutA','$IdMdpA')";
+            $queryInsererAdmin = mysqli_query($cx,$InsererAdmin); 
+        }
+        return true;
     }
+    return false;
 }
 
 // --- Supprimer Etudiant --- //
@@ -399,12 +414,10 @@ function SupprimerEnseignant($IdESupp,$IdMdp){
     $supprimerSpecialiser = "DELETE FROM SPECIALISER WHERE IdEns ='$IdESupp'";
     $querysupprimerSpecialiser = mysqli_query($cx,$supprimerSpecialiser);
     
-//    if($querysupprimerSpecialiser&&$querysupprimerEnseigne&&$querysupprimerReserverHC&& $querysupprimerReserver&&$querysupprimerDispense){
-        $supprimerEnseignant = "DELETE FROM ENSEIGNANT WHERE IdEns ='$IdESupp'";
-        $querysupprimerEnseignant = mysqli_query($cx,$supprimerEnseignant);
-        $supprimerMdp = "DELETE FROM CODES WHERE IdMdp = '$IdMdp'";
-        $querysupprimerMdp = mysqli_query($cx,$supprimerMdp);
-//    }    
+    $supprimerEnseignant = "DELETE FROM ENSEIGNANT WHERE IdEns ='$IdESupp'";
+    $querysupprimerEnseignant = mysqli_query($cx,$supprimerEnseignant);
+    $supprimerMdp = "DELETE FROM CODES WHERE IdMdp = '$IdMdp'";
+    $querysupprimerMdp = mysqli_query($cx,$supprimerMdp);
 }
 
 // --- Supprimer Admin --- //
@@ -415,12 +428,10 @@ function supprimerAdmin($IdESupp,$IdMdp){
 
     $supprimerReserverHC = "DELETE FROM RESERVERHORSCOURS WHERE IdEns ='$IdESupp'";
     mysqli_query($cx,$supprimerReserverHC);
-//    if($querysupprimerReserverHC && $querysupprimerReserver){
-        $supprimerAdmin = "DELETE FROM ADMINISTRATION WHERE IdA ='$IdESupp'";
-        $querysupprimerAdmin = mysqli_query($cx,$supprimerAdmin);
-        $supprimerMdp = "DELETE FROM CODES WHERE IdMdp = '$IdMdp'";
-        $querysupprimerMdp = mysqli_query($cx,$supprimerMdp);
-//    }   
+    $supprimerAdmin = "DELETE FROM ADMINISTRATION WHERE IdA ='$IdESupp'";
+    $querysupprimerAdmin = mysqli_query($cx,$supprimerAdmin);
+    $supprimerMdp = "DELETE FROM CODES WHERE IdMdp = '$IdMdp'";
+    $querysupprimerMdp = mysqli_query($cx,$supprimerMdp); 
 }
 
 // --- Modifier Enseignant --- //
@@ -454,14 +465,40 @@ function getMdpEtudiant($IdE){
     return $res['IdMdp'] ;
 }
 
-function modifierEtudiant($MdpE,$IdE,$NomE,$PrenomE,$IdF){
-    $cx = bdConnect();
-    $ModifierE = "UPDATE ETUDIANT SET NomE ='$NomE' , PrenomE= '$PrenomE' , IdF = '$IdF' WHERE IdE ='$IdE'";
-    $queryModifierE= mysqli_query($cx,$ModifierE);
+function modifierEtudiant($MdpE,$IdE,$NomE,$PrenomE,$IdF,$oldIdE){
+    $exist = getEtudiant($IdE);
+    if(!$exist){
+        $cx = bdConnect();   
+        $groupeTD = getEtudiantTD($IdE);
+        if(!is_null($groupeTD)){
+            //Suppréssion du groupe de td
+            $deleteEtudiantTD = "DELETE FROM APPARTIENT WHERE IdE = $IdE;";
+            mysqli_query($cx,$deleteEtudiantTD);          
+        }
+        //Update de l'étudiant
+        $ModifierE = "UPDATE ETUDIANT SET IdE = $IdE, NomE ='$NomE' , PrenomE= '$PrenomE' , IdF = $IdF WHERE IdE = $oldIdE;";
+        mysqli_query($cx,$ModifierE);
+        if(!is_null($groupeTD)){
+            //Réaffectation
+            $affectation = "INSERT INTO APPARTIENT (IdGTD, IdE) VALUES ($groupeTD, $IdE);";
+            mysqli_query($cx,$affectation);       
+        }
+        //Mise a jour du mot de passe
+        $IdMdpE = getMdpEtudiant($IdE);
+        $ModifierMdp = "UPDATE CODES SET Mdp ='$MdpE' WHERE IdMdp ='$IdMdpE';";
+        mysqli_query($cx,$ModifierMdp);
+        return true;
+    }
+    return false;
+}
 
-    $IdMdpE = getMdpEtudiant($IdE);
-    $ModifierMdp = "UPDATE CODES SET Mdp ='$MdpE' WHERE IdMdp ='$IdMdpE'";
-    $queryModifierMdp = mysqli_query($cx,$ModifierMdp);
+function getEtudiantTD($IdE){
+    $conn = dbConnect();
+    $sql = "SELECT IdGTD FROM APPARTIENT WHERE IdE = $IdE;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res['IdGTD'];    
 }
 
 // --- modifier administrateur --- //
