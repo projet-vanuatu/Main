@@ -157,7 +157,6 @@ if(isset($data['formulaire'])){
     </div>
 </div>
 <script type="text/javascript">
-//    change_valeurM();
     var changer = change_valeurM();
     if(changer){
        preSelection(); 

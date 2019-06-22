@@ -1,8 +1,10 @@
 <?php
-@session_start();
-require_once './Core/Manager.php';
+
+require_once '../Core/Manager.php';
+require_once '../Core/Define.php';
+
 //Fonction de recherche du materiel équipé dans la salle
-if(isset($_POST["idens"]) && !empty($_POST["idens"])){
+if(isset($_POST["idens"])){
     $id=$_POST["idens"];
     $conn= dbConnect();
     $sql = "(SELECT SEANCES.NumS, MATIERES.IntituleM AS titre, DATE_FORMAT(SEANCES.DateDebutSeance, '%e/%m/%Y') AS date, DATE_FORMAT(SEANCES.DateDebutSeance, '%H:%i') AS heureD, DATE_FORMAT(SEANCES.DateFinSeance, '%H:%i') AS heureF

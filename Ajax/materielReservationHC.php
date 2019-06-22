@@ -53,6 +53,7 @@ if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
         $stmt->execute();
         $res1 = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $resultat = $res1;
+        
         if($_POST["reservation"] != -1){
             $id = $_POST["reservation"];
             $sql = "SELECT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat FROM MATERIELS, RESERVERHORSCOURS "
@@ -62,6 +63,7 @@ if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
             $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $resultat = array_merge($resultat, $res2);
         }
+        
         $resultatReturn = $resultat;
         $_SESSION['matdispoRHC'] = $resultatReturn;
         if(isset($_SESSION['matdispoRHC'])){

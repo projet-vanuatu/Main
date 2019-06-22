@@ -1,10 +1,9 @@
 <?php
-
-require_once FPUBLIC.DS.'Core/Manager.php';
-
 /*
  * Gestion groupes TD
  */
+
+require_once './Core/Manager.php';
 
 function getFormations(){
     $conn = dbConnect();
@@ -111,13 +110,15 @@ function RecupererReserver(){
     return $resResa;
 }
 
-//####################################################################################################################################################
-//************************************************************** RESERVATION COURS *******************************************************************
-//####################################################################################################################################################
+function getReservation($id){
+    $conn = dbConnect();
+    $sql = "SELECT IdRes, IdENS, IdMat, NumS FROM RESERVER WHERE IdRes = $id;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resSeances = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $resSeances;    
+}
 
-//==========================================================================
-//RECUPERER infos d'une séance
-//==========================================================================
 Function RecupererSeance(){
     $conn = dbConnect();
     $sql = "SELECT S.NumS, S.DateDebutSeance, S.IdGTD, S.NumM, M.IntituleM, S.DateFinSeance, S.IdGCM "
@@ -130,20 +131,34 @@ Function RecupererSeance(){
     return $resSeances;
 }
 
-//==========================================================================
-//SUPPRIMER  une réservation d'une séance
-//==========================================================================
-function SupprimerReserver($IdRes){
-    $cx = ConnectDB();
-    $sql = "DELETE FROM RESERVER "
-            . "WHERE IdRes = $IdRes ";
-    mysqli_query($cx, $sql); 
-    return "gestionReservation.php";
-    }
+function insertReservation($data){
+    $conn = dbConnect();
+    $IdENS = $data['IdENS'];
+    $IdA = $_SESSION['id'];
+    $IdMat = $data['IdMat'];
+    $NumS = $data['NumS'];     
+    $sql = "INSERT INTO RESERVER (IdENS , IdA ,NumS,  IdMat , DateResa) VALUES ($IdENS , $IdA , $NumS  , $IdMat , NOW());";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();    
+}
 
-//####################################################################################################################################################
-//************************************************************ RESERVATION HORS COURS ****************************************************************
-//####################################################################################################################################################
+function updateReservation($data){
+        $IdRes = $data['IdRes'];
+        $IdMat = $data['IdMat'];
+        $numS = $data['NumS'];
+        $idEns = $data['IdENS'];
+        $idA = $_SESSION['id'];
+        $conn = dbConnect(); 
+        $sql = "UPDATE RESERVER SET IdMat = $IdMat, NumS = $numS, IdEns = $idEns, IdA = $idA, DateResa = NOW() WHERE IdRes = $IdRes;";
+        $stmt = $conn->prepare($sql); 
+        $stmt->execute();    
+}
+
+function deleteReservation($id){
+    $cx = bdConnect();
+    $sql = "DELETE FROM RESERVER WHERE IdRes = $id;";
+    mysqli_query($cx, $sql);     
+}
 
 function RecupererReserverHorscours(){
     $conn = dbConnect();
@@ -204,4 +219,222 @@ function getReservationHC($id){
     $stmt->execute();
     $res = $stmt->fetch(PDO::FETCH_ASSOC);
     return $res;
+}
+
+/*
+ * Gestion planning
+ */
+
+ function RecupMCM($IdF){
+    $conn = dbConnect();
+    $sql = "SELECT MATIERES.NumM, MATIERES.IntituleM FROM MATIERES, UNITE_ENSEIGNEMENT "
+            . "WHERE MATIERES.IdUE=UNITE_ENSEIGNEMENT.IdUE AND UNITE_ENSEIGNEMENT.IdF=$IdF AND MATIERES.TypeM='CM'";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resM = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resM;
+}
+
+function RecupMTD($IdF){
+    $conn = dbConnect();
+    $sql = "SELECT MATIERES.NumM, MATIERES.IntituleM FROM MATIERES, UNITE_ENSEIGNEMENT "
+            . "WHERE MATIERES.IdUE=UNITE_ENSEIGNEMENT.IdUE AND UNITE_ENSEIGNEMENT.IdF=$IdF AND MATIERES.TypeM='TD'";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resM = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resM;
+}
+    
+ function RecupCSPE(){
+    $conn = dbConnect();
+    $sql = "SELECT IdCSPE, IntituleCSPE FROM COURS_SPECIAUX";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resCSPE = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resCSPE;
+}
+
+//Fonction d'affichage des groupes TD
+ function RecupGroupeTD($IdF){
+    $conn = dbConnect();
+    $sql = "SELECT IdGTD, NumGroupTD FROM GROUPE_TD WHERE IdF=$IdF";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resG = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resG;
+}
+
+//Fonction d'affichage des groupes CM
+ function RecupGroupeCM($IdF){
+    $conn = dbConnect();
+    $sql = "SELECT IdGCM, NumGroupCM FROM GROUPE_CM WHERE IdF=$IdF";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resG = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resG;
+}
+
+function horaireSalleDispo($DateDebut,$DateFin){    
+    $conn = dbConnect(); 
+    $sql1="SELECT distinct(SALLE.IdS) , SALLE.NomS , SITE.NomSITE , SALLE.CapaciteS 
+            FROM  SALLE , SITE
+            WHERE SALLE.IdSITE=SITE.IdSITE
+            AND SALLE.IdS NOT IN (
+                                SELECT SEANCES.IdS
+                                FROM SEANCES
+                                WHERE SEANCES.DateDebutSeance >= '$DateDebut' AND SEANCES.DateDebutSeance < '$DateFin')
+            AND SALLE.IdS NOT IN (
+                                SELECT SEANCES.IdS
+                                FROM SEANCES
+                                WHERE SEANCES.DateFinSeance > '$DateDebut' AND SEANCES.DateFinSeance <= '$DateFin')
+             AND SALLE.IdS NOT IN (
+                                SELECT SEANCES.IdS
+                                FROM SEANCES
+                                WHERE SEANCES.DateDebutSeance < '$DateDebut' 
+                                AND SEANCES.DateFinSeance > '$DateFin')";        
+    $stmt = $conn->prepare($sql1); 
+    $stmt->execute();
+    $res1 = $stmt->fetchAll();
+    return $res1;
+}
+
+function RecupNomEns($idens){
+    $conn = dbConnect();
+    $sql = "SELECT NomENS, PrenomENS FROM ENSEIGNANT WHERE ENSEIGNANT.IdENS = $idens;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resE = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resE;
+}
+
+ function RecupNomFormation($idf){
+    $conn = dbConnect();
+    $sql = "SELECT IntituleF FROM FORMATION WHERE FORMATION.IdF= $idf;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resF = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resF;
+}
+
+function insertSeanceCM($params){
+    $conn = dbConnect();
+    $ids = $params['ids'];
+    $CM = $params['grpcm'];
+    $Matiere = $params['titleCM'];
+    $start = $params['start'];
+    $end = $params['end'];
+    $idens = $params['IdENS'];
+    $query = "INSERT INTO SEANCES (NumM, IdS, IdGCM, DateDebutSeance, DateFinSeance) VALUES ($Matiere, $ids, $CM, '$start','$end')";
+    $stmt = $conn->prepare($query); 
+    $stmt->execute();
+    $NumS= NewNumS1($ids,$CM,$Matiere,$start);
+    $sql = "INSERT INTO DISPENSE (IdENS , NumS) VALUES ($idens,$NumS)";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();         
+}
+
+function insertSeanceCMspe($params){
+    $conn = dbConnect();
+    $ids = $params['ids'];
+    $CM = $params['grpcm'];
+    $Spe = $params['titleCS'];
+    $start = $params['start'];
+    $end = $params['end'];
+    $idens = $params['IdENS'];
+    $query1 = "INSERT INTO SEANCES (IdCSPE, IdS, IdGCM, DateDebutSeance, DateFinSeance) VALUES ($Spe, $ids, $CM, '$start','$end')";
+    $stmt = $conn->prepare($query1); 
+    $stmt->execute();
+    $NumS= NewNumS2($ids,$CM,$Spe,$start);
+    $sql1 = "INSERT INTO DISPENSE (IdENS , NumS) VALUES ($idens,$NumS)";
+    $stmt = $conn->prepare($sql1); 
+    $stmt->execute();  
+}
+
+function insertSeanceTD($params){
+    $conn = dbConnect();
+    $ids = $params['ids'];
+    $TD = $params['grptd'];
+    $Matiere = $params['titleTD'];
+    $start = $params['start'];
+    $end = $params['end'];
+    $idens = $params['IdENS'];
+    $query2 = "INSERT INTO SEANCES 
+             (NumM, IdS, IdGTD, DateDebutSeance, DateFinSeance) 
+              VALUES ($Matiere, $ids, $TD, '$start','$end')";
+    $stmt = $conn->prepare($query2); 
+    $stmt->execute();
+    $NumS= NewNumS3($ids,$TD,$Matiere,$start);
+    $sql2 = "INSERT INTO DISPENSE (IdENS , NumS) VALUES ($idens,$NumS)";
+    $stmt = $conn->prepare($sql2); 
+    $stmt->execute();     
+}
+
+function insertSeanceTDspe($params){
+    $conn = dbConnect();
+    $ids = $params['ids'];
+    $TD = $params['grptd'];
+    $Spe = $params['titleCS'];
+    $start = $params['start'];
+    $end = $params['end'];
+    $idens = $params['IdENS'];
+    $query3 = "INSERT INTO SEANCES 
+             (IdCSPE, IdS, IdGTD, DateDebutSeance, DateFinSeance) 
+              VALUES ($Spe, $ids, $TD, '$start','$end')";
+    $stmt = $conn->prepare($query3); 
+    $stmt->execute();
+    $NumS= NewNumS4($ids,$TD,$Spe,$start);
+    $sql3 = "INSERT INTO DISPENSE (IdENS , NumS) VALUES ($idens,$NumS)";
+    $stmt = $conn->prepare($sql3); 
+    $stmt->execute();      
+}
+
+function NewNumS1($ids,$CM,$Matiere,$start){
+    $conn = dbConnect();
+    $sql = "SELECT NumS
+            FROM SEANCES 
+            WHERE NumM=$Matiere
+            AND IdS = $ids
+            AND IdGCM = $CM
+            AND DateDebutSeance = '$start'";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res['NumS'];
+}
+
+function NewNumS2($ids,$CM,$Spe,$start){
+    $conn = dbConnect();
+    $sql1 = "SELECT NumS FROM SEANCES WHERE IdCSPE=$Spe AND IdS = $ids AND IdGCM = $CM AND DateDebutSeance = '$start'";
+    $stmt = $conn->prepare($sql1); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res['NumS'];
+}
+
+function NewNumS3($ids,$TD,$Matiere,$start){
+    $conn = dbConnect();
+    $sql2 = "SELECT NumS
+    FROM SEANCES 
+    WHERE NumM=$Matiere
+    AND IdS = $ids
+    AND IdGTD = $TD
+    AND DateDebutSeance = '$start'";
+    $stmt = $conn->prepare($sql2); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res['NumS'];
+}
+
+function NewNumS4($ids,$TD,$Spe,$start){
+    $conn = dbConnect();
+    $sql3 = "SELECT NumS
+    FROM SEANCES 
+    WHERE IdCSPE=$Spe
+    AND IdS = $ids
+    AND IdGTD = $TD
+    AND DateDebutSeance = '$start'";
+    $stmt = $conn->prepare($sql3); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $res['NumS'];           
 }

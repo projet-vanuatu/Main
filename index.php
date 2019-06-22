@@ -6,7 +6,7 @@ define('ROOT', dirname(FPUBLIC));
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_URL', $_SERVER['SCRIPT_NAME']);
 
-require_once(FPUBLIC.DS.'Core/App.php');
+require_once('./Core/App.php');
 
 try{  
     dispatcher();

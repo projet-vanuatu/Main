@@ -49,7 +49,7 @@ function renderView($action = 'index', $data = array(), $title = 'Intranet Facul
     if(is_null($layout)){
         $layout = $_SESSION['request']['layout'];
     }
-    require_once(FPUBLIC.DS.'View/Layout/'.$layout.'/'.$layout.'.php');
+    require_once(FPUBLIC.DS.'View/Layout/'.$_SESSION['request']['layout'].'/'.$layout.'.php');
 }
 
 /*

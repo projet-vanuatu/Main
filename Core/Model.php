@@ -3,6 +3,8 @@
  * Modèle général qui regroupe les fonctions utilisées par plusieurs modèles
  */
 
+require_once 'Manager.php';
+
 function getLastID($attr, $table){
     $db = dbConnect();
     $stmt = $db->prepare("SELECT max($attr) as attr FROM $table;");
@@ -51,3 +53,6 @@ function writeLog($id = '', $nom = 'N/A', $prenom = 'N/A', $action = 'N/A', $idA
     fclose($file);
 }
 
+/*
+ * Recherche planning
+ */
