@@ -90,6 +90,68 @@ function getSallesPlanning(){
     return $resG;
 }
 
+function getFormationsList(){
+    $conn = dbConnect();
+    $sql = "SELECT IdF, IntituleF FROM FORMATION ORDER BY IdF;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $listFormation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $listFormation;   
+}
+
+function getGroupeTDList($id){
+    $conn = dbConnect();
+    $sql = "SELECT NumGroupTD , IdGTD "
+            . "FROM GROUPE_TD  "
+            . "WHERE IdF = $id;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $listGTD = $stmt->fetchAll(PDO::FETCH_ASSOC);    
+    return $listGTD;   
+}
+
+function getEtudiantNonAffForm(){
+    $db = dbConnect();
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE "
+            . "FROM ETUDIANT e WHERE IdF IS NULL;"); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $res;
+}
+
+function getEtudiantFormList($id){
+    $db = dbConnect();
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF, g.NumGroupTD "
+            . "FROM ETUDIANT e, FORMATION f, GROUPE_TD g, APPARTIENT a "
+            . "WHERE e.IdF = f.IdF AND e.IdE = a.IdE AND a.IdGTD = g.IdGTD AND e.IdF = $id;"); 
+    $stmt->execute();
+    $listEtudiants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF "
+            . "FROM ETUDIANT e, FORMATION f "
+            . "WHERE e.IdF = f.IdF "
+            . "AND e.IdF = $id "
+            . "AND e.IdE NOT IN (SELECT IdE FROM APPARTIENT);");
+    $stmt->execute();
+    $listEtudiants2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    return array_merge($listEtudiants, $listEtudiants2);
+}
+
+function getEtudiantTDList($id){
+    $db = dbConnect();
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF, gp.NumGroupTD "
+            . "FROM ETUDIANT e, FORMATION f , APPARTIENT a, GROUPE_TD gp "
+            . "WHERE e.IdF = f.IdF "
+            . "AND e.IdE = a.IdE "
+            . "AND a.IdGTD = gp.IdGTD "
+            . "AND a.IdGTD = $id;");
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $res;
+}
+
+
 /*
  * Recherche planning
  */

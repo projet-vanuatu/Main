@@ -16,6 +16,7 @@
                 <img src="Public/Images/logo.JPG" style="width:52px;" alt=""/>
             </div>
             <a href="index.php?action=index">Accueil</a>
+            <a href="index.php?action=gererEtudiant">Liste étudiant</a>
             <a href="index.php?action=gererPlanning">Gestion du planning</a>
             <a href="index.php?action=gererAffectationTD">Gestion groupes TD</a>
             <div class="subnav">

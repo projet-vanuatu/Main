@@ -30,6 +30,7 @@
                     <a href="index.php?action=consulterPlanning&type=planningEnseingnant">Par enseignant</a>
                 </div>
             </div>
+            <a href="index.php?action=gererEtudiant">Liste étudiant</a>
             <div class="subnav2">
                 <a href = "index.php?action=deconnection" class="subnavbtn2">Deconnexion&nbsp;<span class="glyphicon glyphicon-log-in"></span></a>
             </div>

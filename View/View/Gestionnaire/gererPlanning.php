@@ -112,52 +112,54 @@ if(isset($_SESSION['enseignantPlanning'])){
         });
     });
 </script>
-
-<div class="row" style="height:60px; width:100%;"></div>
-<div class="row" style="width:100%;">
-    <div class="col-sm-1"></div>
-    <div class="col-sm-2">         
-        <div class=" well" style="height:28%;"></div>
-        <div class="jumbotron"class="well">
-            <center><label  for="sel1">Paramètres d'affichage :</label></center>            
-            <form  action ='index.php?action=gererPlanning' method='POST'>
-                <label   for="sel1">Formation :</label>
-                <select class="form-control"  name="idf" required>
-                    <option value=''>Selectionnez une formation</option>
-                    <?php             
-                    for($i=0;$i<=count($data['formations'])-1;$i++){
-                    ?>
-                        <Option <?php if($idfs == $data['formations'][$i]['IdF'] ){echo "selected";} ?>
-                            value ="<?php echo $data['formations'][$i]['IdF'] ?>"><?php echo $data['formations'][$i]['IntituleF'] ?></option>     
-                    <?php
-                    }
-                    ?>
-                </select>
-                <label  for="sel1">Enseignant :</label>
-                <select class="form-control"  name="idens" required>
-                    <option value=''>Selectionnez un enseignant</option>
-                    <?php             
-                    for($i=0;$i<=count($data['enseignants'])-1;$i++){
-                    ?>
-                        <Option <?php if($idenss == $data['enseignants'][$i]['IdENS']) {echo "selected";} ?> 
-                            value ="<?php echo $data['enseignants'][$i]['IdENS'] ?>"><?php echo $data['enseignants'][$i]['NomENS']." ".$data['enseignants'][$i]['PrenomENS'] ?></option>     
-                    <?php
-                    }
-                    ?>
-                </select> 
-                <input hidden value="<?php echo $idfs?>" id='form'>
-                <input hidden value="<?php echo $idenss ?>" id='ens'>
-                <br>
-                <center><input class="btn btn-primary" type ='submit'  value ='Valider'></center>
-            </form>          
-        </div>      
-    </div>
-    <div class="col-sm-8">  
-        <div class="container">       
-            <center><h2 style='font-weight:bold' >Gestion planning</h2></center>
-            <br>    
+<div class="container-fluid" style="margin-top: 50px;">
+    <div class="row">
+        <div class="col-sm-2">         
+            <div class="well" style="margin-top: 200px;">
+                <label for="sel1">Critères :</label>            
+                <form  action ='index.php?action=gererPlanning' method='POST'>
+                    <label   for="sel1">Formation :</label>
+                    <select class="form-control"  name="idf" required>
+                        <option value=''>Selectionnez une formation</option>
+                        <?php             
+                        for($i=0;$i<=count($data['formations'])-1;$i++){
+                        ?>
+                            <Option <?php if($idfs == $data['formations'][$i]['IdF'] ){echo "selected";} ?>
+                                value ="<?php echo $data['formations'][$i]['IdF'] ?>"><?php echo $data['formations'][$i]['IntituleF'] ?></option>     
+                        <?php
+                        }
+                        ?>
+                    </select>
+                    <br>
+                    <label for="sel1">Enseignant :</label>
+                    <select class="form-control"  name="idens" required>
+                        <option value=''>Selectionnez un enseignant</option>
+                        <?php             
+                        for($i=0;$i<=count($data['enseignants'])-1;$i++){
+                        ?>
+                            <Option <?php if($idenss == $data['enseignants'][$i]['IdENS']) {echo "selected";} ?> 
+                                value ="<?php echo $data['enseignants'][$i]['IdENS'] ?>"><?php echo $data['enseignants'][$i]['NomENS']." ".$data['enseignants'][$i]['PrenomENS'] ?></option>     
+                        <?php
+                        }
+                        ?>
+                    </select> 
+                    <input hidden value="<?php echo $idfs?>" id='form'>
+                    <input hidden value="<?php echo $idenss ?>" id='ens'>
+                    <br>
+                    <input class="btn btn-success btn-block" type ='submit'  value ='Valider'>
+                </form>          
+            </div>      
+        </div>
+        <div class="col-sm-10">       
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <h2 style="font-weight:bold;">Gestion planning</h2>
+                </div>
+                <div class="col-sm-4"></div>               
+            </div>
+            <hr>
             <div id="calendar"><script></script></div>
         </div>
     </div>
-    <div class="col-sm-1"></div>
 </div>

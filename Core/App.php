@@ -48,7 +48,7 @@ function dispatcher(){
         }    
     //Si l'utilisateur veut se deconnecter
     }else if($action == 'consulterPlanning'){
-        consulterPlanning();
+        consulterPlanning($params);
     }else{
         setSessionRequest('Authentification', 'connexion', 'Authentification');        
         loadController(AUTH);

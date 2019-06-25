@@ -1,47 +1,3 @@
-<br><br>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-2" style="margin-top:100px;">
-            <div class="jumbotron">
-                <center><label  for="sel1">Paramètres d'affichage :</label></center>
-                <form action='index.php?action=consulterPlanning' method="POST">
-                    <input type="hidden" name="type" value="planningEnseingnant">
-                    <label for="sel1">Enseignant :</label>
-                    <select class="form-control" name="criteria" required>
-                        <option value="">Choisir un enseignant..</option>
-                    <?php             
-                    for($i=0;$i<=count($data['formulaire'])-1;$i++){
-                    ?>
-                        <Option <?php if($data['selected'] == $data['formulaire'][$i]['IdEns']){echo "selected";}  ?> value ="<?php echo $data['formulaire'][$i]['IdEns']; ?>">
-                                <?php echo $data['formulaire'][$i]['PrenomEns']." ".$data['formulaire'][$i]['NomEns']; ?></option>
-                    <?php
-                    }
-                    ?>
-                    </select>        
-                    <br>
-                    <center><input class="btn btn-primary" type ='submit'  value ='Valider'></center>
-                </form>
-            </div>
-        </div>
-        <div class="col-sm-8">  
-            <center><h2 style='font-weight:bold'>Planning des enseignants</h2></center>
-            <br>
-            <div id="calendar"><script></script></div>
-        </div>
-        <div class="col-sm-2" style="margin-top:100px;">
-            <input type="hidden" id="statut" value="<?php echo isset($_SESSION['request']['controller']) ? $_SESSION['request']['controller'] : ""; ?>">
-        <?php 
-        if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant'){
-        ?>
-            <div id="reserv" class="jumbotron">
-                <center><label  for="sel1">Reservations :</label></center>
-            </div>
-        <?php 
-        }
-        ?>
-        </div>
-    </div>
-</div>
 <script>      
     $(document).ready(function() {       
         var calendar = $('#calendar').fullCalendar({ 
@@ -100,3 +56,47 @@
         });
     });  
 </script>
+<br><br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2" style="margin-top:100px;">
+            <div class="jumbotron">
+                <center><label  for="sel1">Paramètres d'affichage :</label></center>
+                <form action='index.php?action=consulterPlanning' method="POST">
+                    <input type="hidden" name="type" value="planningEnseingnant">
+                    <label for="sel1">Enseignant :</label>
+                    <select class="form-control" name="criteria" required>
+                        <option value="">Choisir un enseignant..</option>
+                        <?php             
+                        for($i=0;$i<=count($data['formulaire'])-1;$i++){
+                        ?>
+                            <Option <?php if($data['selected'] == $data['formulaire'][$i]['IdEns']){echo "selected";}  ?> value ="<?php echo $data['formulaire'][$i]['IdEns']; ?>">
+                                    <?php echo $data['formulaire'][$i]['PrenomEns']." ".$data['formulaire'][$i]['NomEns']; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>        
+                    <br>
+                    <center><input class="btn btn-primary" type ='submit'  value ='Valider'></center>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-8">  
+            <center><h2 style='font-weight:bold'>Planning des enseignants</h2></center>
+            <br>
+            <div id="calendar"><script></script></div>
+        </div>
+        <div class="col-sm-2" style="margin-top:100px;">
+            <input type="hidden" id="statut" value="<?php echo isset($_SESSION['request']['controller']) ? $_SESSION['request']['controller'] : ""; ?>">
+            <?php 
+            if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant' && $_SESSION['request']['controller'] !== 'Authentification'){
+            ?>
+                <div id="reserv" class="jumbotron">
+                    <center><label  for="sel1">Reservations :</label></center>
+                </div>
+            <?php 
+            }
+            ?>
+        </div>
+    </div>
+</div>

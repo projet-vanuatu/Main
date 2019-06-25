@@ -89,7 +89,7 @@
         <div class="col-sm-2">
             <input type="hidden" id="statut" value="<?php echo isset($_SESSION['request']['controller']) ? $_SESSION['request']['controller'] : ""; ?>">
         <?php 
-        if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant'){
+        if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant' && $_SESSION['request']['controller'] !== 'Authentification'){
         ?>
             <div class=" well" style="height:28%;"></div>
             <div id="reserv" class="jumbotron" style="font-size:0.8vw;">
