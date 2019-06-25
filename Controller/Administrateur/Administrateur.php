@@ -188,11 +188,7 @@ function supprimerMatiere($params){
 function modifierMatiere($params){
     modelLoader();
     if(!empty($_POST)){
-        if(isset($params['nbHeuresMTD'])){
-            updateMatiereTD($_POST);
-        }else{
-            updateMatiere($_POST);
-        }       
+        updateMatiere($_POST);      
         redirect(ADMIN, 'gererMatiereUE', array('activeParams' => 'matiere'));
     }
     $informations = getMatiere($params['id']);

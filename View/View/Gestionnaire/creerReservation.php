@@ -1,5 +1,4 @@
 <?php
-var_dump($data['preSelection']);
 $btnNav = 'Retour';
 if(isset($data['formulaire'])){
     $formAction = 'index.php?action=modifierReservation';

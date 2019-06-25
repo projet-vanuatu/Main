@@ -37,7 +37,7 @@ if($data['active'] == ""){
         <table class="table table-hover">
             <thead class="header">
                 <tr>
-                    <th>Identifiant</th>
+                    <th>N° série</th>
                     <th>Type</th>
                     <th>Etat de fonctionnement</th>
                     <th>Salle</th>
@@ -49,7 +49,7 @@ if($data['active'] == ""){
                 for($i=0;$i<=count($data['materielAff'])-1;$i++){
             ?>
                 <tr>
-                    <td><?php echo $data['materielAff'][$i]['IdMat']; ?></td>
+                    <td><?php echo $data['materielAff'][$i]['numSerie']; ?></td>
                     <td><?php echo $data['materielAff'][$i]['TypeMat']; ?></td>
                     <td><?php echo $data['materielAff'][$i]['Etat_fonctionnement']; ?></td>
                     <td><?php echo $data['materielAff'][$i]['NomS']; ?></td>
@@ -78,11 +78,11 @@ if($data['active'] == ""){
         </div>
     </div>
     <br>   
-    <div class="table-wrapper-scroll-y my-custom-scrollbar" >
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
         <table class="table table-hover">
             <thead class="header">
                 <tr>
-                    <th>Identifiant</th>
+                    <th>N° série</th>
                     <th>Type</th>
                     <th>Etat de fonctionnement</th>  
                 </tr>
@@ -92,9 +92,9 @@ if($data['active'] == ""){
             for($i=0;$i<=count($data['materielNonAff'])-1;$i++){
             ?>
                 <tr>
-                    <td><?php echo $data['materielNonAff'][$i]['IdMat'] ?></td>
-                    <td><?php echo $data['materielNonAff'][$i]['TypeMat'] ?></td>
-                    <td><?php echo $data['materielNonAff'][$i]['Etat_fonctionnement'] ?></td>
+                    <td><?php echo $data['materielNonAff'][$i]['numSerie']; ?></td>
+                    <td><?php echo $data['materielNonAff'][$i]['TypeMat']; ?></td>
+                    <td><?php echo $data['materielNonAff'][$i]['Etat_fonctionnement']; ?></td>
                     <td>
                         <p><a href =  "<?php echo "index.php?action=modifierMateriel&id=".$data['materielNonAff'][$i]['IdMat']."&activeParams=NF"; ?>">
                                 <button type="button" class="btn btn-warning">Modifier</button></a>

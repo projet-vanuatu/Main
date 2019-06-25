@@ -122,8 +122,8 @@ if(isset($_SESSION['enseignantPlanning'])){
             <center><label  for="sel1">Paramètres d'affichage :</label></center>            
             <form  action ='index.php?action=gererPlanning' method='POST'>
                 <label   for="sel1">Formation :</label>
-                <select class="form-control"  name="idf">
-                    <option value =''>Selectionnez une formation</option>
+                <select class="form-control"  name="idf" required>
+                    <option value=''>Selectionnez une formation</option>
                     <?php             
                     for($i=0;$i<=count($data['formations'])-1;$i++){
                     ?>
@@ -134,8 +134,8 @@ if(isset($_SESSION['enseignantPlanning'])){
                     ?>
                 </select>
                 <label  for="sel1">Enseignant :</label>
-                <select class="form-control"  name="idens">
-                    <option value ='' >Selectionnez un enseignant</option>
+                <select class="form-control"  name="idens" required>
+                    <option value=''>Selectionnez un enseignant</option>
                     <?php             
                     for($i=0;$i<=count($data['enseignants'])-1;$i++){
                     ?>
@@ -161,5 +161,3 @@ if(isset($_SESSION['enseignantPlanning'])){
     </div>
     <div class="col-sm-1"></div>
 </div>
-
-<pre><?php var_dump($_SESSION); ?></pre>

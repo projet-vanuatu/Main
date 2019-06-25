@@ -13,37 +13,57 @@ require_once FPUBLIC.DS.'Config/Config.php';
  * Fonction qui redirige sur le controller et l'action demandée
  */
 function dispatcher(){
-    //Si l'utilisateur est connecté et ne veux pas se deconnecter
+    date_default_timezone_set(TIMEZONE);  
+    $action = $_GET['action'];
+    $params = parser($_GET);
+    //consulter planning hors connexion
     if(isset($_SESSION['id'])){
-        $action = $_GET['action'];
-        //Si l'utilisateur ne se deconnecte pas
-        if($action != 'deconnection'){       
-            $params = parser($_GET);
-            loadController($_SESSION['request']['controller']);
-            $_SESSION['request']['action'] = $action;
-            if(function_exists($action)){
-                if(!empty($params)){
-                    call_user_func_array($action, array($params));
+        $expireConection = checkConnection();
+        //si la session est toujours active
+        if(!$expireConection){
+            $_SESSION['timeConnect'] = date('H:i');
+            //Si l'utilisateur ne se deconnecte pas
+            if($action != 'deconnection'){       
+                loadController($_SESSION['request']['controller']);
+                $_SESSION['request']['action'] = $action;
+                //Si l'action demandé est disponible (existe)
+                if(function_exists($action)){
+                    if(!empty($params)){
+                        call_user_func_array($action, array($params));
+                    }else{
+                        call_user_func($action);
+                    }            
                 }else{
-                    call_user_func($action);
-                }            
+                    error("La page demandée n'est pas trouvée");
+                }
             }else{
-                error("La page demandée n'est pas trouvée");
-            }
+                setSessionRequest('Authentification', 'connexion', 'Authentification');
+                loadController(AUTH);
+                call_user_func('deconnection');                
+            }           
         }else{
-            $_SESSION['request']['controller'] = AUTH;
-            $_SESSION['request']['action'] = 'connexion';
-            $_SESSION['request']['layout'] = AUTH;           
+            setSessionRequest('Authentification', 'connexion', 'Authentification');
             loadController(AUTH);
-            call_user_func('deconnection');                
-        }
+            call_user_func('deconnection');               
+        }    
     //Si l'utilisateur veut se deconnecter
+    }else if($action == 'consulterPlanning'){
+        consulterPlanning();
     }else{
-        $_SESSION['request']['controller'] = AUTH;
-        $_SESSION['request']['action'] = 'connexion';
-        $_SESSION['request']['layout'] = AUTH;           
+        setSessionRequest('Authentification', 'connexion', 'Authentification');        
         loadController(AUTH);
         call_user_func('connexion');       
+    }
+}
+
+function checkConnection(){
+    $activeConnection = strtotime($_SESSION['timeConnect']);
+    $systemTime = strtotime(date('H:i'));
+    $delai = 1800; //30 minutes
+    if($systemTime > ($activeConnection + $delai)){
+        return true;
+    }else{
+        return false;
     }
 }
 
@@ -78,20 +98,9 @@ function userRequest(){
  */
 function loadController($name){
     $file = FPUBLIC.DS.'Controller'.DS.ucfirst($name).DS.ucfirst($name).'.php';
-    //echo $file;
-    //die();
     if(file_exists($file)){
         require_once $file;
     }else{
         error('La page demandée est introuvable');
     }   
-}
-
-/*
- * Fonction qui gère les erreurs
- * @param string $msg : message d'erreur à afficher
- */
-function error($msg){
-    echo '<h4>'.$msg.'</h4><br><p>Ooops une erreur est survenue !';
-    die();  
 }

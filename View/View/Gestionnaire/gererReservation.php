@@ -1,6 +1,6 @@
 <br>
 <br>
-<div class="container">
+<div class="container-fluid" style="margin: 0px 50px 0px 50px;">
       <ul class="nav nav-tabs">
               <li class="nav-item">
                   <a class="nav-link acstive" onclick="afficherR();">Réservations des séances</a>
@@ -11,7 +11,7 @@
       </ul>
 </div>
 <br>
-<div class="container">
+<div class="container-fluid">
     <br>
     <div class="row" <?php echo (is_null($data['active'])) ? "style='display:block;'" : "style='display:none;'"; ?> id="searchR">
         <div class="row">
@@ -21,12 +21,11 @@
             </div>
         </div>
         <script>
-            $(document).ready(
-            function(){
+            $(document).ready( function(){
                 $("#inputR").on("keyup", function(){
-                var value = $(this).val().toLowerCase();
+                    var value = $(this).val().toLowerCase();
                     $("#tableR tr").filter(function(){
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                     });
                 });
             });
@@ -57,7 +56,7 @@
                     </thead>
                     <tbody>
                         <?php
-                            for($i=0;$i<=count($data['reservations'])-1;$i++){
+                        for($i=0;$i<=count($data['reservations'])-1;$i++){
                         ?>
                             <tr>               
                                 <td><?php echo utf8_encode($data['reservations'][$i]['NomENS']); ?></td>
@@ -89,7 +88,7 @@
                                 </td>
                             </tr>                   
                         <?php
-                            }                                     
+                        }                                     
                         ?>   
                     </tbody>
                 </table>

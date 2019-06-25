@@ -6,8 +6,10 @@ if(isset($data['formulaire'])){
     $typeMatiere = $data['formulaire']['TypeM'];
     $idUE = $data['formulaire']['IdUE'];
     $idDomaine = $data['formulaire']['IdDomaine'];
+    $couleurMatiere = $data['formulaire']['CouleurM'];
+    $idMatiere = $data['formulaire']['NumM'];
 }else{
-     $btnNav = 'Gerer Matiere';
+    $btnNav = 'Gerer Matiere';
     $action = 'Ajouter';
     $actionForm = 'index.php?action=creerMatiere';
     $idFormation = "";
@@ -25,7 +27,8 @@ if(isset($data['formulaire'])){
             <h2><center>Ajouter matiere</center></h2>
         </div>           
         <div class="col-sm-4">
-            <a href="index.php?action=gererMatiereUE&activeParams=matiere"><button type="button" class="btn btn-primary" style="margin-top:25px; float:right;"><?php echo $btnNav; ?></button></a>
+            <a href="index.php?action=gererMatiereUE&activeParams=matiere">
+                <button type="button" class="btn btn-primary" style="margin-top:25px; float:right;"><?php echo $btnNav; ?></button></a>
         </div>
     </div>
 </div>
@@ -45,15 +48,18 @@ if(isset($data['formulaire'])){
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
             <form action="<?php echo $actionForm; ?>" method="POST">
-                <div class="row" <?php echo ($typeMatiere == 'TD') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
+                <?php echo isset($idMatiere) ? "<input type='hidden' name='idMatiere' value='$idMatiere'>" : ""; ?>
+                <div class="row">
                     <div class="form-group">
                       <label for="pwd">Intitulé :</label>
                       <input type="text" class="form-control" id="nomMat" placeholder="Nom de la matière" name="intituleM"
-                             value='<?php echo isset($data['formulaire']['IntituleM']) ? $data['formulaire']['IntituleM'] : NULL; ?>'>
+                             value='<?php echo isset($data['formulaire']['IntituleM']) ? $data['formulaire']['IntituleM'] : NULL; ?>'
+                             <?php echo ($typeMatiere == 'TD') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                     </div>
                     <div class="form-group"> 
                         <label for="sel1">Type :</label>
-                        <select class="form-control" id="typeMatiere" name="choixTypeMatiere" onchange="ajouterTD(value);">
+                        <select class="form-control" id="typeMatiere" name="choixTypeMatiere" onchange="ajouterTD(value);"
+                                <?php echo ($action == 'Modifier') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                             <option value="" selected>Choisir le type de matière</option>
                             <option value="CM" <?php if ($typeMatiere == 'CM'){ echo "selected";}?>>CM</option>
                             <option value="TD" <?php if ($typeMatiere == 'TD'){ echo "selected";}?> >TD</option>
@@ -62,12 +68,13 @@ if(isset($data['formulaire'])){
                     </div>
                     <div class="form-group"> 
                       <label for="sel1">Unité d'enseignement :</label>
-                      <select class="form-control" id="nomUE" name="choixUE">
+                      <select class="form-control" id="nomUE" name="choixUE" <?php echo ($typeMatiere == 'TD') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                         <option selected >Choisir une U.E.</option>
                             <?php             
                                 for($i=0;$i<=count($data['ues'])-1;$i++){
                             ?>
-                                <Option <?php if ($data['ues'][$i]['IdUE'] == $idUE){ echo "selected";}?> value ="<?php echo $data['ues'][$i]['IdUE'] ?>"><?php echo $data['ues'][$i]['IntituleUE'] ?></option>     
+                                <Option <?php if ($data['ues'][$i]['IdUE'] == $idUE){ echo "selected";}?> 
+                                    value ="<?php echo $data['ues'][$i]['IdUE'] ?>"><?php echo $data['ues'][$i]['IntituleF'].' - '.$data['ues'][$i]['IntituleUE']; ?></option>     
                             <?php
                                 }
                             ?>
@@ -75,36 +82,51 @@ if(isset($data['formulaire'])){
                     </div>
                     <div class="form-group"> 
                         <label for="sel1">Domaine :</label>
-                        <select class="form-control" id="nomDom" name="choixDomaine">
+                        <select class="form-control" id="nomDom" name="choixDomaine" <?php echo ($typeMatiere == 'TD') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                           <option selected >Choisir un domaine </option>
                               <?php             
                                   for($i=0;$i<=count($data['domaines'])-1;$i++){
                               ?>
-                                  <Option <?php if ($data['domaines'][$i]['IdDomaine'] == $idDomaine){ echo "selected";}?> value ="<?php echo $data['domaines'][$i]['IdDomaine'] ?>"><?php echo $data['domaines'][$i]['Intitule_domaine'] ?></option>     
+                                  <Option <?php if ($data['domaines'][$i]['IdDomaine'] == $idDomaine){ echo "selected";}?> 
+                                      value ="<?php echo $data['domaines'][$i]['IdDomaine'] ?>"><?php echo $data['domaines'][$i]['Intitule_domaine'] ?></option>     
                               <?php
                                   }
                               ?>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="pwd">Nombre d'heures CM :</label>
-                        <input type="text" maxlength="3" class="form-control" id="nbHeuresMat" placeholder="Nombre entre 1 et 999" name="nbHeuresM"
+                        <label for="pwd">Nombre d'heures <?php echo $typeMatiere.' :'; ?></label>
+                        <input type="number" maxlength="3" class="form-control" id="nbHeuresMat" placeholder="Nombre entre 1 et 200.." name="nbHeuresM"
                                value='<?php echo isset($data['formulaire']['NbHeuresFixees']) ? $data['formulaire']['NbHeuresFixees'] : NULL; ?>'>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Choirir une couleur :</label>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <input type="color" id="color" name="color" class="form-control" 
+                                       value="<?php echo isset($data['formulaire']['CouleurM']) ? $data['formulaire']['CouleurM'] : "#f6b73c"; ?>"
+                                       <?php echo ($typeMatiere == 'TD') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                 </div>
-                <div class="row" <?php echo ($typeMatiere == 'CM') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
-                    <div class="checkbox">
-                      <label><input type="checkbox" value="" id="addTD" <?php echo ($typeMatiere == 'TD') ? "checked disabled" : "onchange='ajouterNbHeureTD();' disabled"; ?>>Creer un TD</label>
+                <?php
+                if($action == 'Ajouter'){
+                ?>      
+                    <div class="row">
+                        <div class="checkbox">
+                          <label><input type="checkbox" value="" id="addTD" onchange='ajouterNbHeureTD();' disabled>Creer un TD</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Nombre d'heures TD :</label>
+                            <input type="number" maxlength="3" class="form-control" id="nbHeuresMatTD" 
+                                   placeholder="Nombre entre 1 et 200.." name="nbHeuresMTD" value='' disabled>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="pwd">Nombre d'heures TD :</label>
-                        <input type="text" maxlength="3" class="form-control" id="nbHeuresMatTD" placeholder="Nombre entre 1 et 999" name="nbHeuresMTD"
-                               value='<?php echo isset($data['formulaire']['nbHeuresMTD']) ? $data['formulaire']['nbHeuresMTD'] : NULL; ?>' 
-                                   <?php echo ($typeMatiere == 'TD') ? "disabled" : ""; ?>>
-                    </div>
-                </div>
-                <?php echo isset($data['formulaire']['NumM']) ? "<input type='hidden' value='".$data['formulaire']['NumM']."' name='NumM'>" : NULL; ?>
+                <?php
+                }
+                ?>
                 <button type="submit" class="btn btn-primary btn-block"><?php echo $action; ?></button>
             </form>
         </div>
@@ -115,12 +137,13 @@ if(isset($data['formulaire'])){
 <script>
     function ajouterTD(type){
         if(type == "CM"){
-            document.getElementById('addTD').disabled = false;            
+            document.getElementById('addTD').disabled = false;
+            document.getElementById('nbHeuresMatTD').disabled = true;
         }else{
-            document.getElementById('addTD').disabled = true; 
+            document.getElementById('addTD').disabled = true;
+            document.getElementById('nbHeuresMatTD').disabled = true;
         }
-    }
-    
+    }    
     function ajouterNbHeureTD(){
         if(document.getElementById('addTD').checked){
             document.getElementById('nbHeuresMatTD').disabled = false;            

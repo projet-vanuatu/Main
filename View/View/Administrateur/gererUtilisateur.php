@@ -36,7 +36,7 @@ if(isset($data['active'])){
     </div>
     <br>            
     <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <table class="table table-hover">
+        <table class="table table-hover bg-global-gris">
             <thead class="header">
                 <tr>
                     <th>Identifiant</th>
@@ -84,7 +84,7 @@ if(isset($data['active'])){
     </div> 
     <br>                
     <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <table class="table table-hover">
+        <table class="table table-hover bg-global-gris">
             <thead class="header">
                 <tr>
                     <th>Identifiant</th>
@@ -133,7 +133,7 @@ if(isset($data['active'])){
     </div>
     <br>        
     <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <table class="table table-hover">
+        <table class="table table-hover bg-global-gris">
             <thead class="header">
                 <tr>
                     <th>Identifiant</th>

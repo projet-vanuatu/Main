@@ -5,21 +5,29 @@
 function connexion(){
     if(!empty($_POST['id']) && !empty($_POST['pwd'])){
         modelLoader();
-        $result = getConnexion($_POST);
+        $conn = $_POST;
+        $result = getConnexion($conn);
         if($result){
-            $_SESSION['id'] = $result['idA'];
-            $_SESSION['nom'] = $result['NomA'];
-            $_SESSION['prenom'] = $result['PrenomA'];
-            $_SESSION['request']['controller'] = $result['StatutA'];
-            $_SESSION['request']['action'] = 'index';
-            $_SESSION['request']['layout'] = $result['StatutA'];
+            setSessionAttr($result['idA'], $result['NomA'], $result['PrenomA']);
+            setSessionRequest($result['StatutA'], 'index', $result['StatutA']);
+            $_SESSION['timeConnect'] = date('H:i');
             redirect($_SESSION['request']['controller'], $_SESSION['request']['action']);
-        }else{
-            $_SESSION['request']['controller'] = 'Authentification';
-            $_SESSION['request']['action'] = 'connexion';
-            $_SESSION['request']['layout'] = 'Authentification';
-            redirect(AUTH, 'connexion');
         }
+        $result = getConnexionEnseignant($conn);
+        if($result){
+            setSessionAttr($result['idENS'], $result['NomENS'], $result['PrenomENS']);
+            setSessionRequest('Enseignant', 'index', 'Enseignant');
+            $_SESSION['timeConnect'] = date('H:i');
+            redirect($_SESSION['request']['controller'], $_SESSION['request']['action']);            
+        }
+        $result = getConnexionEtudiant($conn);
+        if($result){
+            setSessionAttr($result['idE'], $result['NomE'], $result['PrenomE']);
+            setSessionRequest('Etudiant', 'index', 'Etudiant');
+            $_SESSION['timeConnect'] = date('H:i');
+            redirect($_SESSION['request']['controller'], $_SESSION['request']['action']);            
+        }
+        setSessionRequest('Authentification', 'connexion', 'Authentification');
     }
     renderView('connexion');
 }
@@ -27,5 +35,6 @@ function connexion(){
 function deconnection(){
     $_SESSION = array();
     $GLOBALS = array();
+    session_unset();
     redirect(AUTH, 'connexion');
 }

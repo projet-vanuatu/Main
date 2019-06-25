@@ -40,22 +40,74 @@ function redirect($controller = null, $action = null, $args = array()){
  * @param array $data : données transmits à la vue
  * @param string $title : titre de la page
  */ 
-function renderView($action = 'index', $data = array(), $title = 'Intranet Faculté du Vanuatu', $layout = null){
+function renderView($action = 'index', $data = array(), $title = 'Intranet Faculté du Vanuatu', $layout = null, $controller = null, $dossierLayout = null){
+    if(is_null($controller)){
+        $controller = $_SESSION['request']['controller'];       
+    }
+    if(is_null($dossierLayout)){
+        $dossierLayout = $_SESSION['request']['layout'];
+    }
     extract($data);
     ob_start();
-    require_once(FPUBLIC.DS.'View/View/'. ucfirst($_SESSION['request']['controller']) .DS. $action . '.php');
+    require_once(FPUBLIC.DS.'View/View/'. ucfirst($controller) .DS. $action . '.php');
     $content = ob_get_clean();
     ob_end_clean();
     if(is_null($layout)){
         $layout = $_SESSION['request']['layout'];
     }
-    require_once(FPUBLIC.DS.'View/Layout/'.$_SESSION['request']['layout'].'/'.$layout.'.php');
+    require_once(FPUBLIC.DS.'View/Layout/'.$dossierLayout.'/'.$layout.'.php');
 }
 
 /*
  * Fonction qui charge les modèles
  */
-function modelLoader(){
-    $file = FPUBLIC.DS.'Model'.DS.ucfirst($_SESSION['request']['controller']).DS.ucfirst($_SESSION['request']['controller']).'.php';
+function modelLoader($controller = null){
+    if(is_null($controller)){
+        $controller = $_SESSION['request']['controller'];
+    }
+    $file = FPUBLIC.DS.'Model'.DS.ucfirst($controller).DS.ucfirst($controller).'.php';
     require_once $file;
+}
+
+/*
+ * 
+ */
+function consulterPlanning($params = null){
+    if(isset($params['type'])){
+       $view = $params['type']; 
+    }else{
+       $view = "planningFormation"; 
+    }
+    $_SESSION['criteria'] = "";
+    if(!empty($_POST)){
+        $selected = $_POST['criteria'];
+        $view = $_POST['type'];
+        $_SESSION['criteria'] = $_POST['criteria'];
+    }else{
+        $selected = "";
+    } 
+    if($view == 'planningEnseingnant'){
+        $dataToView = getEnseignantsPlanning();   
+    }else if($view == 'planningFormation'){
+        $dataToView = getFormationsPlanning();
+    }else if($view == 'planningSalle'){
+        $dataToView = getSallesPlanning();
+    }
+    if(isset($_SESSION['id'])){
+        renderView($view, array('formulaire' => $dataToView, 'selected' => $selected),
+                'Planning par enseignant', $_SESSION['request']['layout'].'Planning', 'Planning', NULL);       
+    }else{
+        renderView($view, array('formulaire' => $dataToView, 'selected' => $selected),
+                'Planning par enseignant', 'Planning', 'Planning', 'Planning');
+    }
+}
+
+/*
+ * Fonction qui gère les erreurs
+ * @param string $msg : message d'erreur à afficher
+ */
+function error($msg){
+    $msg = '<h4>Ooops une erreur est survenue !</h4><br><p>'.$msg.'</p>';
+    renderView('Erreur', array('msgErreur' => $msg), 'Page d\'erreur', 'Erreur', 'Erreur', 'Erreur');
+    die();  
 }

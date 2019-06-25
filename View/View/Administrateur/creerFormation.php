@@ -11,7 +11,7 @@
         </div>
     </div>
     <hr>
-    <div class="row" style="background-color: white; padding: 20px;">
+    <div class="row" style="padding: 20px;">
         <form action="index.php?action=creerFormation" method="POST">
             <div class="row">
                 <div class="col-sm-2"></div>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="form-group">
                       <label for="capaciteForm">Capacité:</label>
-                      <input type="text" class="form-control" id="capaciteForm" placeholder="200..." name="capaciteForm" required>
+                      <input type="number" class="form-control" id="capaciteForm" placeholder="200..." name="capaciteForm" required>
                     </div>
                     <div class="form-group">
                         <label for="nbTdForm">Nombre de groupe de TD:</label>

@@ -1,8 +1,13 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+function setSessionRequest($controller, $action, $layout){
+    $_SESSION['request']['controller'] = $controller;
+    $_SESSION['request']['action'] = $action;
+    $_SESSION['request']['layout'] = $layout;       
+}
 
+function setSessionAttr($id, $nom, $prenom){
+    $_SESSION['id'] = $id;
+    $_SESSION['nom'] = $nom;
+    $_SESSION['prenom'] = $prenom;
+}

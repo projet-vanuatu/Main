@@ -535,31 +535,18 @@ function getMatieres(){
 
 function getMatiere($id){
     $conn = dbConnect();
-    $sql = "SELECT m.NumM, m.IntituleM, m.TypeM, m.NbHeuresFixees, m.IdUE, m.IdDomaine, u.IntituleUE FROM MATIERES m, UNITE_ENSEIGNEMENT u"
+    $sql = "SELECT m.NumM, m.IntituleM, m.TypeM, m.NbHeuresFixees, m.IdUE, m.IdDomaine, u.IntituleUE, m.CouleurM"
+            . " FROM MATIERES m, UNITE_ENSEIGNEMENT u"
             . " WHERE m.IdUE = u.IdUE AND m.NumM = $id;";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
     $res = $stmt->fetch(PDO::FETCH_ASSOC);
-    //on regarde si il y a un td  
-    if($res['TypeM'] == 'CM'){
-        $idTD = getMatiereTD($res['IntituleM']);
-        if($idTD){
-            $stmt = $conn->prepare("SELECT NbHeuresFixees FROM MATIERES WHERE NumM = $idTD;");
-            $stmt->execute();
-            $groupeTD = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt->closeCursor(); 
-            $res['nbHeuresMTD'] = $groupeTD['NbHeuresFixees'];                
-        }
-    }else if($res['TypeM'] == 'TD'){
-        $res['nbHeuresMTD'] = $res['NbHeuresFixees'];
-        unset($res['NbHeuresFixees']);
-    }
     return $res;    
 }
 
 function getUEs(){
     $db = dbConnect();
-    $sql="SELECT u.IdUE, u.IntituleUE, f.IntituleF, f.IdF FROM UNITE_ENSEIGNEMENT u, FORMATION f WHERE u.IdF=f.IdF";
+    $sql="SELECT u.IdUE, u.IntituleUE, f.IntituleF, f.IdF FROM UNITE_ENSEIGNEMENT u, FORMATION f WHERE u.IdF = f.IdF";
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC); 
@@ -623,50 +610,51 @@ function insererMatiere($post){
     $UEM = $post['choixUE'];
     $typeM = $post['choixTypeMatiere'];
     $nbHeuresM = $post['nbHeuresM'];
-    $InsererM = "INSERT INTO MATIERES(IntituleM, TypeM, NbHeuresFixees, IdUE, IdDomaine) "
-        . "VALUES ('$nomMat', '$typeM', '$nbHeuresM', '$UEM', '$DomaineM')";
+    $color = $post['color'];
+    $InsererM = "INSERT INTO MATIERES(IntituleM, TypeM, NbHeuresFixees, IdUE, IdDomaine, CouleurM) "
+        . "VALUES ('$nomMat', '$typeM', '$nbHeuresM', '$UEM', '$DomaineM', '$color');";
     mysqli_query($cx,$InsererM);
     if(isset($post['nbHeuresMTD'])){
         $nomMat = $post['intituleM'];
         $nbHeureTD = $post['nbHeuresMTD'];
-        $InsererTD = "INSERT INTO MATIERES(IntituleM, TypeM, NbHeuresFixees, IdUE, IdDomaine) "
-            . "VALUES ('$nomMat', 'TD', '$nbHeureTD', '$UEM', '$DomaineM')";
+        $InsererTD = "INSERT INTO MATIERES(IntituleM, TypeM, NbHeuresFixees, IdUE, IdDomaine, CouleurM) "
+            . "VALUES ('$nomMat', 'TD', '$nbHeureTD', '$UEM', '$DomaineM', '$color');";
         mysqli_query($cx,$InsererTD);
     }   
 }
 
-function updateMatiere($data){
+function updateMatiere($data){   
     $cx = bdConnect();
+  
+    $type = $data['choixTypeMatiere'];
+    
+    if($type == 'CM'){
+        $originMatiere = getMatiere($data['idMatiere']); 
+        $idTD = getMatiereTD($originMatiere['IntituleM'], $originMatiere['IdUE']);        
+    }else{
+        $idTD = "";
+    }
+    
+    $idm = $data['idMatiere'];
     $intM = $data['intituleM'];
-    $typeM = $data['choixTypeMatiere'];
     $nbheure = $data['nbHeuresM'];
     $idue = $data['choixUE'];
     $iddom = $data['choixDomaine'];
-    $idm = $data['NumM'];
-    $updateM = "UPDATE MATIERES SET IntituleM = '$intM',TypeM = '$typeM', NbHeuresFixees = '$nbheure',IdUE = '$idue', IdDomaine = '$iddom' WHERE NumM=$idm";
+    $color = $data['color'];
+    $updateM = "UPDATE MATIERES SET IntituleM = '$intM', NbHeuresFixees = '$nbheure', IdUE = '$idue', "
+            . "IdDomaine = '$iddom', CouleurM = '$color' WHERE NumM = $idm;";
     mysqli_query($cx,$updateM);
-    //Si c'est un CM on regarde si il y à un TD à mettre à jour
-    if($typeM == 'CM'){
-        $numTD = getMatiereTD($intM);
-        //si il y à un TD on le met à jour
-        if($numTD){
-           $updateTD = "UPDATE MATIERES SET IntituleM = '$intM',TypeM = '$typeM', NbHeuresFixees = '$nbheure',IdUE = '$idue', IdDomaine = '$iddom' WHERE NumM=$numTD";
-            mysqli_query($cx,$updateTD);
-        }
-    }   
+    
+    if($type == 'CM' && $idTD != ""){
+        $updateM = "UPDATE MATIERES SET IntituleM = '$intM', IdUE = '$idue', "
+                . "IdDomaine = '$iddom', CouleurM = '$color' WHERE NumM = $idTD;";
+        mysqli_query($cx,$updateM);             
+    }
 }
 
-function updateMatiereTD($data){
-    $cx = bdConnect();
-    $nbheure = $data['nbHeuresMTD'];
-    $idm = $data['NumM'];
-    $updateM = "UPDATE MATIERES SET NbHeuresFixees = '$nbheure' WHERE NumM = $idm;";
-    mysqli_query($cx,$updateM);
-}
-
-function getMatiereTD($nomCM){
+function getMatiereTD($nomCM, $ue){
     $db = dbConnect();
-    $sql="SELECT NumM FROM MATIERES WHERE IntituleM = '$nomCM' AND TypeM = 'TD';";
+    $sql="SELECT NumM FROM MATIERES WHERE IntituleM = '$nomCM' AND IdUE = $ue AND TypeM = 'TD';";
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -796,9 +784,8 @@ function insererMateriel($args){
     $Type = $args['Type'];
     $Etat = $args['Etat'];
     $IdS = $args['Salle'];
-    $IdS = $args['Salle']; 
-    $serie = $args['numSerie'];
-    $Materiel="INSERT INTO MATERIELS (IdMat, numSerie, TypeMat,Etat_fonctionnement,IdS) value (NULL, '$serie', '$Type', '$Etat', $IdS);";
+    $numSerie = $args['numSerie'];
+    $Materiel="INSERT INTO MATERIELS (IdMat, numSerie, TypeMat, Etat_fonctionnement, IdS) VALUES (NULL, '$numSerie', '$Type', '$Etat', $IdS);";
     $queryMateriel = mysqli_query($cx,$Materiel);    
 }
 
@@ -816,7 +803,7 @@ function getMaterielsAff(){
 
 function getMaterielsNonAff(){
      $conn = dbConnect();
-     $sql = "SELECT  TypeMat, numSerie ,Etat_fonctionnement ,IdMat
+     $sql = "SELECT  IdMat, TypeMat, numSerie ,Etat_fonctionnement
              FROM MATERIELS
              WHERE IdMat Not In (SELECT m.IdMat
                                  FROM MATERIELS m , SALLE s , SITE si

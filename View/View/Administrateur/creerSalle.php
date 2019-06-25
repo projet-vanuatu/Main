@@ -44,16 +44,16 @@ if(isset($data['formulaire'])){
                 <div class="form-group">
                     <label for="pwd">Nom :</label>
                     <input type="text" class="form-control" id="nomSal" placeholder="Nom de la salle" name="nomSalle"
-                           value='<?php echo isset($data['formulaire']['NomS']) ? $data['formulaire']['NomS'] : ""; ?>'>
+                           value='<?php echo isset($data['formulaire']['NomS']) ? $data['formulaire']['NomS'] : ""; ?>' required>
                 </div>
                 <div class="form-group"> 
                     <label for="sel1">Capacité maximale de la salle :</label>
-                    <input type="text" maxlength="3" class="form-control" id="capMaxSalle" placeholder="Nombre entre 1 et 999" name="capaciteMaxSalle" 
-                           value ='<?php echo isset($data['formulaire']['CapaciteS']) ? $data['formulaire']['CapaciteS'] : ""; ?>'>
+                    <input type="number" maxlength="3" max="200" class="form-control" id="capMaxSalle" placeholder="Nombre entre 1 et 200" name="capaciteMaxSalle" 
+                           value ='<?php echo isset($data['formulaire']['CapaciteS']) ? $data['formulaire']['CapaciteS'] : ""; ?>' required>
                 </div>
                 <div class="form-group"> 
                     <label for="sel1">Type de salle :</label>
-                    <select class="form-control" id="typeSalle" name="choixTypeSalle">
+                    <select class="form-control" id="typeSalle" name="choixTypeSalle" required>
                     <?php 
                         if($TypeS == 'Cours'){$Cours='Selected'; $Informatique=""; $NoSelect="";}
                         elseif($TypeS =='Informatique'){$Cours=''; $Informatique="Selected"; $NoSelect="";}
@@ -66,16 +66,16 @@ if(isset($data['formulaire'])){
                 </div>
                 <div class="form-group"> 
                     <label for="sel1">Site :</label>
-                    <select class="form-control" name="choixSite">
-                    <option selected >Choisir un site</option>
-                        <?php             
-                        for($i=0;$i<=count($data['sites'])-1;$i++){
-                        ?>
-                        <Option <?php  if($nomSite == $data['sites'][$i]['NomSITE']){echo 'Selected';} ?>
-                            value ="<?php echo $data['sites'][$i]['IdSITE'] ?>"><?php echo $data['sites'][$i]['NomSITE'] ?></option>     
-                        <?php
-                        }
-                        ?>
+                    <select class="form-control" name="choixSite" required>
+                        <option selected >Choisir un site</option>
+                            <?php             
+                            for($i=0;$i<=count($data['sites'])-1;$i++){
+                            ?>
+                            <Option <?php  if($nomSite == $data['sites'][$i]['NomSITE']){echo 'Selected';} ?>
+                                value ="<?php echo $data['sites'][$i]['IdSITE'] ?>"><?php echo $data['sites'][$i]['NomSITE'] ?></option>     
+                            <?php
+                            }
+                            ?>
                     </select>
                 </div>
                 <?php echo isset($data['formulaire']['IdS']) ? "<input type='hidden' value='".$data['formulaire']['IdS']."' name='IdS'>" : ""; ?>

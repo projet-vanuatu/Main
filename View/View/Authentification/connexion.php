@@ -18,7 +18,9 @@
                         <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Mot de passe" style="text-align:center;">
                     </div>
                     <button type="submit" class="btn btn-lg btn-block btn-sm" style="background-color: #FCA848;">Connexion</button>
-                </div>
+                    <br>
+                    <a href="index.php?action=consulterPlanning">Rechercher un planning</a>
+                </div>                
                 <div class="col-sm-2"></div>
             </div>
         </form>    
