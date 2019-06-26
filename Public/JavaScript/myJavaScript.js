@@ -59,14 +59,14 @@ function afficherMatieres(){
 }
 
 //affectation TD
-function changeURL(origin, value){       
-    if(origin == 'nonAff'){
-        var idGroupTD = document.getElementById('idGroupTD').value;
+function changeURL(origin, value){
+    var idGroupTD = document.getElementById('idGroupTD').value;
+    if(origin == 'nonAff'){       
         console.log('Nonaff :' + origin + ' ' + value + '' + idGroupTD);
         document.getElementById('addURL').href = "index.php?action=affecterEtudiant&id=" + value + "&td=" + idGroupTD;
     }else if(origin == 'groupTD'){
         console.log('aff :' + origin + ' ' + value + '');
-        document.getElementById('removeURL').href = "index.php?action=desaffecterEtudiant&id=" + value;
+        document.getElementById('removeURL').href = "index.php?action=desaffecterEtudiant&id=" + value + "&td=" + idGroupTD;
     }
 }
    

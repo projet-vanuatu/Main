@@ -1,7 +1,7 @@
 <?php
 
-require_once '../Core/Manager.php';
-require_once '../Core/Define.php';
+require_once '../../Core/Manager.php';
+require_once '../../Core/Define.php';
 
 //Fonction de recherche du materiel équipé dans la salle
 if(isset($_POST["idens"])){

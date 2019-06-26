@@ -50,7 +50,7 @@ if(isset($data['formulaire'])){
     }
     function AjaxM(date, debut, fin, reservation){
         return $.ajax({
-            url:'Ajax/materielReservationHC.php',
+            url:'Ajax/Gestionnaire/materielReservationHC.php',
             type:'POST',
             data:{date:date, debut:debut, fin:fin, reservation:reservation},
             async: false

@@ -1,7 +1,7 @@
 <?php
 
-require_once '../Core/Manager.php';
-require_once '../Core/Define.php';
+require_once '../../Core/Manager.php';
+require_once '../../Core/Define.php';
 
 //Fonction de recherche du materiel disponible en fonction de la date
 if(isset($_POST["ids"]) && !empty($_POST["ids"])){

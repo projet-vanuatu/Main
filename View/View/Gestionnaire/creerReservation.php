@@ -44,7 +44,7 @@ if(isset($data['formulaire'])){
     }
     function AjaxS(select) {
         return $.ajax({
-            url:'Ajax/seanceEnseignant.php',
+            url:'Ajax/Gestionnaire/seanceEnseignant.php',
             type:'POST',
             data:{idens:select},
             async: false
@@ -63,7 +63,7 @@ if(isset($data['formulaire'])){
     }
     function AjaxM(select, idMat) {
         return $.ajax({
-            url:'Ajax/materielReservationDisponible.php',
+            url:'Ajax/Gestionnaire/materielReservationDisponible.php',
             type:'POST',
             data:{ids:select, idMat:idMat},
             async: false

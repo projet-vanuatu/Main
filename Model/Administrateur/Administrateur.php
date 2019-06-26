@@ -1001,26 +1001,27 @@ function generateNumEtudiant(){
 function getExportEtudiants(){
     $db = dbConnect();
     //Etudiant affecté dans une formation et un groupe de td
-    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF, g.NumGroupTD "
-            . "FROM ETUDIANT e, FORMATION f, GROUPE_TD g, APPARTIENT a "
-            . "WHERE e.IdF = f.IdF AND e.IdE = a.IdE AND a.IdGTD = g.IdGTD;"); 
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, c.Mdp, f.IntituleF, g.NumGroupTD "
+            . "FROM ETUDIANT e, FORMATION f, GROUPE_TD g, APPARTIENT a , CODES c "
+            . "WHERE e.IdF = f.IdF AND e.IdE = a.IdE AND a.IdGTD = g.IdGTD AND e.IdMdp = c.IdMdp;"); 
     $stmt->execute();
     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);   
     //Etudiant sans formation (donc sans td)
-    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE "
-            . "FROM ETUDIANT e WHERE IdF IS NULL;"); 
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, c.Mdp "
+            . "FROM ETUDIANT e, CODES c WHERE e.IdMdp = c.IdMdp AND IdF IS NULL;"); 
     $stmt->execute();
     $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);    
     //etudiant avec formation et sans td
-    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, f.IntituleF "
-            . "FROM ETUDIANT e, FORMATION f "
+    $stmt = $db->prepare("SELECT e.IdE, e.NomE, e.PrenomE, c.Mdp, f.IntituleF "
+            . "FROM ETUDIANT e, FORMATION f, CODES c "
             . "WHERE e.IdF = f.IdF "
+            . "AND e.IdMdp = c.IdMdp "
             . "AND e.IdF IS NOT NULL "
             . "AND e.IdE NOT IN (SELECT IdE FROM APPARTIENT);"); 
     $stmt->execute();
     $res3 = $stmt->fetchAll(PDO::FETCH_ASSOC);
     //Reconstitue les tableaux  
-    $header = array('Numéro étudiants' => 0, 'Nom' => 0, 'Prenom' => 0, 'Formation' => 0, 'Groupe TD' => 0);
+    $header = array('Numéro étudiants' => 0, 'Nom' => 0, 'Prenom' => 0, 'Mot de passe' => 0, 'Formation' => 0, 'Groupe TD' => 0);
     $dataToExport = array_merge($res, $res2);
     $dataToExport = array_merge($dataToExport, $res3);
     //export
@@ -1177,5 +1178,24 @@ function export_data_to_csv($data,$header, $filename='export',$delimiter = ';',$
     fclose($fp);
     
     die();
+}
+
+function cleanDataBase(){
+    $db = dbConnect();
+    $sql = "DELETE FROM DISPENSE;";
+    $db->exec($sql);
+    $sql = "DELETE FROM RESERVER;";
+    $db->exec($sql);
+    $sql = "DELETE FROM SEANCES;";
+    $db->exec($sql);
+    $sql = "DELETE FROM RESERVERHORSCOURS;";
+    $db->exec($sql);
+    $sql = "DELETE FROM APPARTIENT;";
+    $db->exec($sql);
+    $sql = "DELETE FROM ETUDIANT;";
+    $db->exec($sql); 
+    $sql = "DELETE FROM CODES WHERE IdMdp NOT IN (SELECT IdMdp FROM ADMINISTRATION) "
+            . "AND IdMdp NOT IN (SELECT IdMdp FROM ENSEIGNANT);";
+    $db->exec($sql);
 }
 

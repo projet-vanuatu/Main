@@ -1,4 +1,3 @@
-<pre><?php // var_dump($data); ?></pre>
 <?php
     $idens = $data['idEnseignant'];
     $idf = $data['idFormation'];
@@ -71,7 +70,7 @@
     }
     function AjaxS(select){
         return $.ajax({
-            url:'Ajax/MaterielSalle.php',
+            url:'Ajax/Gestionnaire/MaterielSalle.php',
             type:'POST',
             data:{ids:select},
             async: false
@@ -95,7 +94,7 @@
     }
     function AjaxCM(sel) {
         return $.ajax({
-            url:'Ajax/heuresMatCM.php',
+            url:'Ajax/Gestionnaire/heuresMatCM.php',
             type:'POST',
             data:{numm:sel},
             async: false
@@ -120,7 +119,7 @@
     }
     function AjaxTD(sel,grp) {
         return $.ajax({
-            url:'Ajax/heuresMatTD.php',
+            url:'Ajax/Gestionnaire/heuresMatTD.php',
             type:'POST',
             data:{numm:sel,grp:grp},
             async: false
@@ -141,7 +140,9 @@
             <form action ='index.php?action=creerSeance' method="POST">
                 <input type="hidden" name="IdENS" value="<?php echo $idens; ?>">
                 <label for="sel1">Enseignant : <?php echo $data['enseignants'][0]['NomENS']." ".$data['enseignants'][0]['PrenomENS']; ?></label><br>
+                <input type="hidden" name="nomEns" value="<?php echo $data['enseignants'][0]['NomENS']." ".$data['enseignants'][0]['PrenomENS']; ?>">
                 <label for="sel1">Formation : <?php echo $data['formations'][0]['IntituleF']; ?></label><br>
+                <input type="hidden" name="nomForm" value="<?php echo $data['formations'][0]['IntituleF']; ?>">
                 <label for="sel1">Début: <?php echo $datedebut; ?></label>
                 <input hidden name='start' value='<?php echo $datedebut; ?>'>
                 <label for="sel1"> Fin : <?php echo $datefin ?></label>
@@ -152,7 +153,7 @@
                 <input checked="checked" onclick = "cacher();" type ='radio'  name ='Typec' id="CM" value='CM'>
                 <label for="sel1" > TD :</label>
                 <input onclick = "cacher();" type ='radio' name ='Typec' id="TD" value ='TD'><br>
-                <input id="grp" name="grpcm" type="hidden" value="<?php echo $numgcm[0]['IdGCM']?>">
+                <input id="grp" name="grpcm" type="hidden" value="<?php echo $numgcm[0]['IdGCM']; ?>">
                 <div id ='afficher' style='display:none;'>
                     <label  for="sel1"> Groupe de TD :</label>
                     <select class="form-control"  name="grptd" id='grptd' onchange="change_valeurTD();">

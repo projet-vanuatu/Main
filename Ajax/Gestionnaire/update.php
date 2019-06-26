@@ -1,22 +1,50 @@
 <?php
 @session_start();
 
-require_once '../Core/Manager.php';
+require_once '../../Core/Manager.php';
+require_once '../../Core/Model.php';
+require_once '../../Core/Define.php';
 
 $connect = dbConnect();
 
 if(isset($_POST["id"])){
     if(horaireSalle($connect, $_POST["id"],$_POST["start"],$_POST["end"])){
-        if(horaireEns($connect, $_POST["id"],$_POST["start"],$_POST["end"])){    
+        if(horaireEns($connect, $_POST["id"],$_POST["start"],$_POST["end"])){
+            
+            date_default_timezone_set(TIMEZONE);
+            
+            $id = $_POST["id"];
+            $start = $_POST["start"];
+            $end = $_POST["end"];
+            
+            $infoSeance = getSeanceInfoLog($id);
+            $formation = $infoSeance['IntituleF'];
+            $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
+            $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
+            $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
+            $enseignant = $infoSeance['NomENS']." ".$infoSeance['PrenomENS'];
+            $matiere = $infoSeance['title'];
+            $td = $infoSeance['groupe'];
+            $salle = $infoSeance['NomS'];
+            
+            $newDate = date("d/m/Y", strtotime($start));
+            $newDebut = date("H:i", strtotime($start));
+            $newFin = date("H:i", strtotime($end));
+            
+            $action = $formation." - ".$td." - ".$matiere." - ".$enseignant." le : ".$date." de : "
+                .$debut." à ".$fin." dans la salle : ".$salle. " - Déplacé le : ".$newDate." de ".$newDebut." à ".$newFin;
+            writeLog('Déplacé la séance : ', $action, '../../Logs/');
+
             $query = "UPDATE SEANCES SET DateDebutSeance=:start_event, DateFinSeance=:end_event WHERE NumS=:id";
             $statement = $connect->prepare($query);
             $statement->execute(
                 array(
-                  ':start_event' => $_POST['start'],
-                  ':end_event' => $_POST['end'],
-                  ':id'   => $_POST['id']
+                  ':start_event' => $start,
+                  ':end_event' => $end,
+                  ':id'   => $id
                 )
-            );           
+            ); 
+            
             $rep = array('msg' => NULL);
         }else{
             $rep=array('msg' => "L'enseignant a déja cours à cet horaire");

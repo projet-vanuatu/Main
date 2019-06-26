@@ -37,16 +37,20 @@ function affecterEtudiant($params){
     if(!empty($params['id']) && !empty($params['td'])){
         modelLoader();
         addEtudiantTD($params['id'], $params['td']);
-        writeLog($_SESSION['id'], $_SESSION['nom'], $_SESSION['prenom'],
-                'Affecter TD', $params['id'].' - '.$params['td']);
+        $numTD = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $params['td']);
+        $form = getFormationFromTD($params['td']);
+        writeLog('Affécté TD : ', $params['id']." à ".$form." ".$numTD);
     }
     redirect(GEST, 'gererAffectationTD');
 }
 
 function desaffecterEtudiant($params){
-    if(!empty($params['id'])){
+    if(!empty($params['id']) && !empty($params['td'])){
         modelLoader();
+        $numTD = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $params['td']);
+        $form = getFormationFromTD($params['td']);
         deleteEtduaintTD($params['id']);
+        writeLog('Désaffécté TD : ', $params['id']." à ".$form." ".$numTD);
     }
     redirect(GEST, 'gererAffectationTD');
 }
@@ -67,6 +71,14 @@ function creerReservationHC(){
     modelLoader();
     if(!empty($_POST)){
         insertReservationHC($_POST);
+        //log
+        $id = getLastID('IdResHC', 'RESERVERHORSCOURS');      
+        $date = date("d/m/Y", strtotime($_POST['date']));
+        $debut = date("H:i", strtotime($_POST['debut']));
+        $fin = date("H:i", strtotime($_POST['fin']));
+        $action = 'ID réservation : '.$id.' - Matériel : '.$_POST['IdMatHC'].' - Pour : '.$_POST['IdENSHC'].' - le : '.$date.' de '.$debut.' à '.$fin;
+        writeLog('Créer une réservation hors séance : ', $action);
+        //redirection
         redirect(GEST, 'creerReservationHC');
     }
     $arrayEnseignants = RecupererEnseignant();
@@ -76,6 +88,13 @@ function creerReservationHC(){
 function modifierReservationHC($params = null){
     modelLoader();
     if(!empty($_POST)){
+        $id = $_POST['IdResHC'];      
+        $date = date("d/m/Y", strtotime($_POST['date']));
+        $debut = date("H:i", strtotime($_POST['debut']));
+        $fin = date("H:i", strtotime($_POST['fin']));
+        $action = 'ID réservation (original) : '.$id.' // Valeur après mise à jour // Matériel : '.$_POST['IdMatHC'].' - Pour : '.$_POST['IdENSHC'].' - le : '
+                .$date.' de '.$debut.' à '.$fin;
+        writeLog('Modifier une réservation hors séance : ', $action);
         updateReservationHC($_POST);
         redirect(GEST, 'gererReservation', array("active" => 'hc'));
     }
@@ -87,6 +106,8 @@ function modifierReservationHC($params = null){
 
 function supprimerReservationHC($params, $redirect = null){
     modelLoader();
+    $action = 'ID réservation : '.$params['id'];
+    writeLog('Supprimer une réservation hors séance : ', $action);
     deleteReservationHC($params['id']);
     redirect(GEST, 'gererReservation', array("active" => 'hc'));  
 }
@@ -95,6 +116,13 @@ function creerReservation($params = null){
     modelLoader();
     if(!empty($_POST)){
         insertReservation($_POST);
+        $id = getLastID('IdRes', 'RESERVER');
+        $infoSeance = getSeanceInfoLog($_POST['NumS']);
+        $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
+        $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
+        $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
+        $action = 'ID réservation : '.$id.' - Enseignant : '.$_POST['IdENS'].' - Matériel : '.$_POST['IdMat'].' - Séannce du '.$date.' de '.$debut.' à '.$fin;
+        writeLog('Créer une réservation séance : ', $action);
         redirect(GEST, 'gererReservation');
     }
     $arrayEnseignants = RecupererEnseignant();
@@ -110,6 +138,15 @@ function creerReservation($params = null){
 function modifierReservation($params){
     modelLoader();
     if(!empty($_POST)){
+        $id = $_POST['IdRes'];
+        $infoSeance = getSeanceInfoLog($_POST['NumS']);
+        $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
+        $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
+        $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
+        $mateirel = $_POST['IdMat'];
+        $action = 'ID réservation (original) : '.$id.' // Valeur après mise à jour // Matériel : '.$_POST['IdMat'].' - Pour : '.$_POST['IdENS'].' - le : '
+                .$date.' de '.$debut.' à '.$fin;
+        writeLog('Modifier une réservation séance : ', $action);
         updateReservation($_POST);
         redirect(GEST, 'gererReservation');
     }
@@ -120,6 +157,8 @@ function modifierReservation($params){
 
 function supprimerReservation($params){
     modelLoader();
+    $action = 'ID réservation : '.$params['id'];
+    writeLog('Supprimer une réservation séance : ', $action);
     deleteReservation($params['id']);
     redirect(GEST, 'gererReservation');
 }
@@ -140,18 +179,30 @@ function gererPlanning(){
             'Gestion du planning', 'GestionnairePlanning');
 }
 
-function creerSeance($params){
+function creerSeance($params = null){
     modelLoader();
     if(!empty($_POST)){
         if($_POST['Typec']=='CM' && $_POST['Typem']=='ST'){
             insertSeanceCM($_POST);
+            $matiere = getAttrTable('IntituleM', 'MATIERES', 'NumM', $_POST['titleCM']);
+            $td = "CM";
         }else if($_POST['Typec']=='CM' && $_POST['Typem']=='SP'){
             insertSeanceCMspe($_POST);
+            $matiere = "Cours spécial";
+            $td = "CM";
         }else if($_POST['Typec']=='TD' && $_POST['Typem']=='ST'){
             insertSeanceTD($_POST);
+            $matiere = getAttrTable('IntituleM', 'MATIERES', 'NumM', $_POST['titleCM']);
+            $td = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $_POST['grptd']);
         }else if($_POST['Typec']=='TD' && $_POST['Typem']=='SP'){
             insertSeanceTDspe($_POST);
-        }      
+            $matiere = "Cours spécial";
+            $td = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $_POST['grptd']);
+        } 
+        $salle = getAttrTable('NomS', 'SALLE', 'IdS', $_POST['ids']);       
+        $action = $_POST['nomForm']." - ".$td." ".$matiere." ".$_POST['nomEns']." le : ".date("d/m/Y", strtotime($_POST['start']))." de : "
+                .date("H:i", strtotime($_POST['start']))." à ".date("H:i", strtotime($_POST['end']))." dans la salle : ".$salle;
+        writeLog("Créer une séance : ", $action);
         if($_POST['Valider'] == 'Valider'){
             redirect(GEST, 'gererPlanning');
         }else{         
@@ -169,9 +220,15 @@ function creerSeance($params){
     $nummtd = RecupMTD($idf);
     $numgtd = RecupGroupeTD($idf);
     $numgcm = RecupGroupeCM($idf);
-    $datedebut = $params['start'];
-    $datefin = $params['end'];
-    $Salle = horaireSalleDispo($datedebut, $datefin);
+    if(!is_null($params)){
+        $datedebut = $params['start'];
+        $datefin = $params['end'];
+        $Salle = horaireSalleDispo($datedebut, $datefin);       
+    }else{
+        $datedebut = "";
+        $datefin = "";
+        $Salle = "";
+    }
     renderView(
         'formulairePlanning', 
         array(

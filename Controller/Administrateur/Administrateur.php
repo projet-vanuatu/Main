@@ -374,3 +374,9 @@ function export(){
     call_user_func($export);
     redirect(ADMIN, 'administration');
 }
+
+function cleanUP(){
+    modelLoader();
+    cleanDataBase();
+    redirect(ADMIN, 'administration');
+}

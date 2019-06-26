@@ -44,15 +44,56 @@ function arrayAssocToIndex($data, $pattern, $len = 8){
  * @param string $action
  * @param string $idAction
  */
-function writeLog($id = '', $nom = 'N/A', $prenom = 'N/A', $action = 'N/A', $idAction = 'N/A'){
-//    $path = logFilePath();
-    $path = './Logs/Log.txt';
-    $file = fopen($path, 'a');
+function writeLog($action = 'N/A', $idAction = 'N/A', $path = null){
+    if(is_null($path)){
+        $path = "./Logs/";
+    }
+    $fil = "Log.txt";
+    $entire = $path.$fil;
+    $file = fopen($entire, 'a');    
     if($file){
-        $ligne = $id . ' - ' . $nom . ' ' . $prenom . ' - a ' . $action . ' : ' . $idAction . '\n';
-        fputs($file, $ligne);
+        $dateTime = "[".date('d/m/Y H:i:s')."]";
+        $ip = "[".$_SERVER['REMOTE_ADDR']."]";
+        $port = "[".$_SERVER['REMOTE_PORT']."]";
+        $url = "[".$_SERVER['REQUEST_URI']."]";
+        $statut = "[".$_SESSION['request']['controller']."]";
+        $separator = " - ";
+        $space = " ";
+        $nom = $_SESSION['nom'];
+        $prenom = $_SESSION['prenom'];
+        $id = $_SESSION['id'];      
+        $log = $dateTime.$space.$ip.$space.$port.$space.$url." | ".$statut.$space.$id.$separator.$nom.$separator.$prenom
+                .$separator.$action.$idAction."\r\n";
+        fputs($file, $log);
         fclose($file);       
     }
+}
+
+/*
+ * Fonction qui récupère un attribut d'une table
+ */
+function getAttrTable($attr, $table, $criteria, $value){
+    $conn = dbConnect();
+    $sql = "SELECT $attr FROM $table WHERE $criteria = $value;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    return $res[$attr];    
+}
+
+function getFormationFromTD($id){
+    $conn = dbConnect();
+    $sql = "SELECT f.IntituleF FROM FORMATION f, GROUPE_TD g WHERE f.IdF = g.IdF AND g.IdGTD = $id;";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    return $res['IntituleF'];    
+}
+
+function getInformationSeance($id){
+    
 }
 
 /*
@@ -156,9 +197,84 @@ function getEtudiantTDList($id){
  * Recherche planning
  */
 
-function Recupinfo($NumS){
+function getSeanceInfoLog($id){
     $conn = dbConnect();
-    for($i=0;$i<=count($NumS)-1;$i++){                
+    $Resultat[0] = "";
+    $sql ="SELECT SEANCES.NumS ,MATIERES.IntituleM AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
+    FROM MATIERES , SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT ,SITE , FORMATION 
+    WHERE SEANCES.NumM=MATIERES.NumM
+    AND GROUPE_TD.IdF=FORMATION.IdF
+    AND SALLE.IdSITE=SITE.IdSITE
+    AND DISPENSE.NumS=SEANCES.NumS
+    AND SEANCES.IdGTD=GROUPE_TD.IdGTD
+    AND ENSEIGNANT.IdENS=DISPENSE.IdENS
+    AND SEANCES.IdS=SALLE.IdS
+    AND SEANCES.NumS = ".$id;
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);         
+    if(count($res)!= 0){   
+        return $res;  
+    }else{  
+        $sql1 =" SELECT SEANCES.NumS , MATIERES.IntituleM AS title, GROUPE_CM.NumGroupCM AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS , SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE   , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
+        FROM MATIERES , SEANCES, GROUPE_CM, SALLE , DISPENSE , ENSEIGNANT , SITE , FORMATION
+        WHERE SEANCES.NumM=MATIERES.NumM
+        AND GROUPE_CM.IdF=FORMATION.IdF
+        AND SALLE.IdSITE=SITE.IdSITE
+        AND DISPENSE.NumS=SEANCES.NumS
+        AND SEANCES.IdGCM=GROUPE_CM.IdGCM
+        AND ENSEIGNANT.IdENS=DISPENSE.IdENS
+        AND SEANCES.IdS=SALLE.IdS
+        AND SEANCES.NumS =".$id;
+        $stmt = $conn->prepare($sql1); 
+        $stmt->execute();
+        $res1 = $stmt->fetchAll(PDO::FETCH_ASSOC);            
+        if(count($res1)!= 0){
+            return $res1;
+        }else{
+            $sql2 ="SELECT  SEANCES.NumS , COURS_SPECIAUX.IntituleCSPE AS title, GROUPE_CM.NumGroupCM AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE  , FORMATION.IntituleF, COURS_SPECIAUX.CouleurSPE AS couleur
+            FROM COURS_SPECIAUX, SEANCES, GROUPE_CM, SALLE , DISPENSE , ENSEIGNANT , SITE, FORMATION
+            WHERE SEANCES.IdCSPE=COURS_SPECIAUX.IdCSPE
+            AND GROUPE_CM.IdF=FORMATION.IdF
+            AND SALLE.IdSITE=SITE.IdSITE
+            AND DISPENSE.NumS=SEANCES.NumS
+            AND SEANCES.IdGCM=GROUPE_CM.IdGCM
+            AND ENSEIGNANT.IdENS=DISPENSE.IdENS
+            AND SEANCES.IdS=SALLE.IdS
+            AND SEANCES.NumS = ".$id;
+            $stmt = $conn->prepare($sql2); 
+            $stmt->execute();
+            $res2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(count($res2)!= 0){
+                return $res2;
+            }else{
+                $sql3 = "SELECT SEANCES.NumS , COURS_SPECIAUX.IntituleCSPE AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance, SITE.NomSITE  , FORMATION.IntituleF, COURS_SPECIAUX.CouleurSPE AS couleur
+                FROM COURS_SPECIAUX, SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT , SITE, FORMATION
+                WHERE SEANCES.IdCSPE=COURS_SPECIAUX.IdCSPE
+                AND GROUPE_TD.IdF=FORMATION.IdF
+                AND SALLE.IdSITE=SITE.IdSITE
+                AND DISPENSE.NumS=SEANCES.NumS
+                AND SEANCES.IdGTD=GROUPE_TD.IdGTD
+                AND ENSEIGNANT.IdENS=DISPENSE.IdENS
+                AND SEANCES.IdS=SALLE.IdS
+                AND SEANCES.NumS = ".$id;
+                $stmt = $conn->prepare($sql3); 
+                $stmt->execute();
+                $res3 = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                if(count($res3)!= 0){
+                    return $res3;
+                }else{
+                    return $Resultat; 
+                }                                 
+            }                      
+        }             
+    }
+    return $Resultat;
+}
+
+function Recupinfo($NumS){
+    $conn = dbConnect(); 
+    for($i=0;$i<=count($NumS)-1;$i++){                                          
         $sql ="SELECT SEANCES.NumS ,MATIERES.IntituleM AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
         FROM MATIERES , SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT ,SITE , FORMATION 
         WHERE SEANCES.NumM=MATIERES.NumM
@@ -171,10 +287,11 @@ function Recupinfo($NumS){
         AND SEANCES.NumS = ".$NumS[$i]['NumS'] ;
         $stmt = $conn->prepare($sql); 
         $stmt->execute();
-        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);         
-        if(count($res)!= 0){   
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+        if(count($res)!= 0){    
             $Resultat[$i] = $res ;   
-        }else{  
+        }else{
+            $conn = dbConnect();    
             $sql1 =" SELECT SEANCES.NumS , MATIERES.IntituleM AS title, GROUPE_CM.NumGroupCM AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS , SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE   , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
             FROM MATIERES , SEANCES, GROUPE_CM, SALLE , DISPENSE , ENSEIGNANT , SITE , FORMATION
             WHERE SEANCES.NumM=MATIERES.NumM
@@ -187,10 +304,11 @@ function Recupinfo($NumS){
             AND SEANCES.NumS =".$NumS[$i]['NumS'] ;
             $stmt = $conn->prepare($sql1); 
             $stmt->execute();
-            $res1 = $stmt->fetchAll(PDO::FETCH_ASSOC);            
+            $res1 = $stmt->fetchAll(PDO::FETCH_ASSOC);  
             if(count($res1)!= 0){
                 $Resultat[$i] = $res1 ;
             }else{
+                $conn = dbConnect();
                 $sql2 ="SELECT  SEANCES.NumS , COURS_SPECIAUX.IntituleCSPE AS title, GROUPE_CM.NumGroupCM AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE  , FORMATION.IntituleF, COURS_SPECIAUX.CouleurSPE AS couleur
                 FROM COURS_SPECIAUX, SEANCES, GROUPE_CM, SALLE , DISPENSE , ENSEIGNANT , SITE, FORMATION
                 WHERE SEANCES.IdCSPE=COURS_SPECIAUX.IdCSPE
@@ -207,6 +325,7 @@ function Recupinfo($NumS){
                 if(count($res2)!= 0){
                     $Resultat[$i] = $res2 ;
                 }else{
+                    $conn = dbConnect();
                     $sql3 = "SELECT SEANCES.NumS , COURS_SPECIAUX.IntituleCSPE AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance, SITE.NomSITE  , FORMATION.IntituleF, COURS_SPECIAUX.CouleurSPE AS couleur
                     FROM COURS_SPECIAUX, SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT , SITE, FORMATION
                     WHERE SEANCES.IdCSPE=COURS_SPECIAUX.IdCSPE
@@ -221,13 +340,13 @@ function Recupinfo($NumS){
                     $stmt->execute();
                     $res3 = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if(count($res3)!= 0){
-                        $Resultat[$i] = $res3 ;
+                        $Resultat[$i] = $res3 ;                            
                     }else{
-                        $Resultat[$i] = ""; 
-                    }                                 
-                }                      
-            }             
+                        $Resultat[$i] = "";                                                
+                    }                                
+                }                     
+            }            
         }         
     }
     return $Resultat;             
-}
+ }

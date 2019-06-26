@@ -1,7 +1,7 @@
 <?php
 
-require_once '../Core/Manager.php';
-require_once '../Core/Define.php';
+require_once '../../Core/Manager.php';
+require_once '../../Core/Define.php';
 
 if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
         date_default_timezone_set(TIMEZONE);

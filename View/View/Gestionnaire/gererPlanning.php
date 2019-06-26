@@ -42,7 +42,7 @@ if(isset($_SESSION['enseignantPlanning'])){
                 center:'title',
                 right:" ",
             },
-            events: 'Ajax/load.php',
+            events: 'Ajax/Gestionnaire/load.php',
             type:"POST",
             selectable : true ,
             selectHelper:true,
@@ -65,12 +65,12 @@ if(isset($_SESSION['enseignantPlanning'])){
                 var title = event.title;
                 var id = event.id;
                 $.ajax({
-                    url:"Ajax/update.php",
+                    url:"Ajax/Gestionnaire/update.php",
                     type:"POST",
                     data:{title:title, start:start, end:end, id:id},
                     success:function(){
                         calendar.fullCalendar('refetchEvents');
-                        $.getJSON('./Ajax/update.php', function(data){
+                        $.getJSON('./Ajax/Gestionnaire/update.php', function(data){
                             if(data.msg){
                                 alert(data.msg);
                             }                           
@@ -83,12 +83,12 @@ if(isset($_SESSION['enseignantPlanning'])){
                 var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
                 var id = event.id;
                 $.ajax({
-                    url:'Ajax/update.php',
+                    url:'Ajax/Gestionnaire/update.php',
                     type:'POST',
                     data:{start:start, end:end, id:id},
                     success:function(){ 
                         calendar.fullCalendar('refetchEvents');
-                        $.getJSON('./Ajax/update.php', function(data){
+                        $.getJSON('./Ajax/Gestionnaire/update.php', function(data){
                             if(data.msg){
                                 alert(data.msg);
                             } 
@@ -100,7 +100,7 @@ if(isset($_SESSION['enseignantPlanning'])){
                 if(confirm("Etes-vous sur de vouloir supprimer cette séance ?")){
                     var id = event.id;
                     $.ajax({
-                        url:"Ajax/delete.php",
+                        url:"Ajax/Gestionnaire/delete.php",
                         type:"POST",
                         data:{id:id},
                         success:function(){

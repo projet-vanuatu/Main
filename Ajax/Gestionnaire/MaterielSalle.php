@@ -1,7 +1,7 @@
 <?php
 @session_start();
 
-require_once '../Core/Manager.php';
+require_once '../../Core/Manager.php';
 
 //Fonction de recherche du materiel équipé dans la salle
 if(isset($_POST["ids"]) && !empty($_POST["ids"])){
