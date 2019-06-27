@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table class="table table-hover">
+                    <table class="table table-hover bg-global-gris">
                         <thead>
                             <th>Nom site</th><th>Adresse</th><th>Ville</th><th>Code postale</th>
                         </thead>

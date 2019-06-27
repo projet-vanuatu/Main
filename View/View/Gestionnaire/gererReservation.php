@@ -42,7 +42,7 @@
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <h3>Réservations de séances &nbsp;&nbsp;<a href="index.php?action=creerReservation"><button type="button" class="btn btn-success">Créer</button></a></h3>
-                <table class="table table-hover" id="tableR" >
+                <table class="table table-hover bg-global-gris" id="tableR" >
                     <thead>
                          <th>Nom</th>
                          <th>Prénom</th>
@@ -118,7 +118,7 @@
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <h3>Réservations hors séances &nbsp;&nbsp;<a href="index.php?action=creerReservationHC"><button type="button" class="btn btn-success">Créer</button></a></h3>
-                <table class="table table-hover"  id="tableRHC" >
+                <table class="table table-hover bg-global-gris"  id="tableRHC" >
                     <thead>
                          <th>Nom</th>
                          <th>Prénom</th>

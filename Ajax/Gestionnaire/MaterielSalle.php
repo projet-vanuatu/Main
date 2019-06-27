@@ -2,11 +2,14 @@
 @session_start();
 
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
+
+$var = dbCredentials();
+$conn = dbConnect($var);
 
 //Fonction de recherche du materiel équipé dans la salle
 if(isset($_POST["ids"]) && !empty($_POST["ids"])){
     $id=$_POST["ids"];
-    $conn= dbConnect();
     $sql = "SELECT TypeMat, Etat_fonctionnement FROM MATERIELS WHERE IdS=$id";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();

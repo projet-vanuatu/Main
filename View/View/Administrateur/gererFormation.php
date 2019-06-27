@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                    <table class="table table-hover">
+                    <table class="table table-hover bg-global-gris">
                         <thead>
                             <th>Formation</th><th>Capacite</th><th>Groupe TD (numéro/capacité)</th><th>Edition</th>
                         </thead>

@@ -8,6 +8,7 @@
             monthNames:['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
             dayNames:['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
             dayNamesShort:['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+            timeFormat: 'H:mm',
             buttonText: {
                 prev: "Précédent",
                 next: "Suivant",
@@ -59,12 +60,12 @@
 <br><br>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-2" style="margin-top:100px;">
-            <div class="jumbotron">
+        <div class="col-sm-2" style="margin-top:250px;">
+            <div class="well">
                 <center><label  for="sel1">Paramètres d'affichage :</label></center>
                 <form action='index.php?action=consulterPlanning' method="POST">
                     <input type="hidden" name="type" value="planningEnseingnant">
-                    <label for="sel1">Enseignant :</label>
+                    <label for="sel1">Enseignants :</label>
                     <select class="form-control" name="criteria" required>
                         <option value="">Choisir un enseignant..</option>
                         <?php             
@@ -77,13 +78,13 @@
                         ?>
                     </select>        
                     <br>
-                    <center><input class="btn btn-primary" type ='submit'  value ='Valider'></center>
+                    <center><input class="btn btn-success btn-block" type ='submit'  value ='Valider'></center>
                 </form>
             </div>
         </div>
         <div class="col-sm-8">  
             <center><h2 style='font-weight:bold'>Planning des enseignants</h2></center>
-            <br>
+            <hr>
             <div id="calendar"><script></script></div>
         </div>
         <div class="col-sm-2" style="margin-top:100px;">
@@ -91,8 +92,8 @@
             <?php 
             if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant' && $_SESSION['request']['controller'] !== 'Authentification'){
             ?>
-                <div id="reserv" class="jumbotron">
-                    <center><label  for="sel1">Reservations :</label></center>
+                <div id="reserv" class="well">
+                    <center><label  for="sel1">Matériel(s) :</label></center>
                 </div>
             <?php 
             }

@@ -4,6 +4,7 @@
 
 require_once '../../Core/Manager.php';
 require_once '../../Core/Model.php';
+require_once '../../Config/Config.php';
 
 if(isset($_SESSION['enseignantPlanning']) && $_SESSION['formationPlanning']){
     $idens = $_SESSION['enseignantPlanning'];
@@ -13,10 +14,11 @@ if(isset($_SESSION['enseignantPlanning']) && $_SESSION['formationPlanning']){
     $idf = 0;     
 }
 
-$connect = dbConnect();
+$var = dbCredentials();
+$connect = dbConnect($var);
 
 $NumS = RecupNumS($connect, $idens, $idf);
-$res1 = Recupinfo($NumS);
+$res1 = Recupinfo($connect, $NumS);
 
 $data = array();
 $result = $res1;

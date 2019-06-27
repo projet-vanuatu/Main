@@ -79,7 +79,7 @@
     function change_valeurCM(){
         var sel = document.getElementById('numm').value;
         var test2 = AjaxCM(sel);
-        var heuresMat = '<center><b>Heures :</b><br><table><thead><tr><th>Nombre dheures à effectuer :</th><th>Heures déjà affectées :</th></tr></thead></br>';
+        var heuresMat = '<center><b>Heures :</b><br><table><thead><tr><th>A effectuer :</th><th>Déjà affectées :</th></tr></thead></br>';
         $.each($.parseJSON(test2), function(i, obj){
             if(obj.HRest){
                 var HRest = obj.HRest;
@@ -126,33 +126,30 @@
         }).responseText;
     }
 </script>
-<br>
-<div class="row" style="height:7%;width:100%;">
-    <div class="col-sm-4"></div>
-    <div class="col-sm-4"><h2><center>Création d'une séance :</center></h2></div>
-    <div class="col-sm-4"></div>
-</div>
+<br><br>
 <div class="container-fuild" style="margin:60px;">
-    <div class="row "style="width:100%;">
-        <div class="col-sm-3 jumbotron" id='listeMat'><center><b> Matériel(s) présent(s) dans la salle :</b></center><br></div>
+    <div class="row">
+        <div class="col-sm-3 well bg-global-gris" id='listeMat'>
+            <p class="text-center"><b>Matériel(s) présent(s) dans la salle :</b></p>
+        </div>
         <div class="col-sm-1"></div>    
-        <div class="col-sm-4 jumbotron">            
+        <div class="col-sm-4 well bg-global-gris" style="padding: 20px;">            
             <form action ='index.php?action=creerSeance' method="POST">
                 <input type="hidden" name="IdENS" value="<?php echo $idens; ?>">
-                <label for="sel1">Enseignant : <?php echo $data['enseignants'][0]['NomENS']." ".$data['enseignants'][0]['PrenomENS']; ?></label><br>
+                <label for="sel1"><b>Enseignant :</b> <?php echo $data['enseignants'][0]['NomENS']." ".$data['enseignants'][0]['PrenomENS']; ?></label><br>
                 <input type="hidden" name="nomEns" value="<?php echo $data['enseignants'][0]['NomENS']." ".$data['enseignants'][0]['PrenomENS']; ?>">
-                <label for="sel1">Formation : <?php echo $data['formations'][0]['IntituleF']; ?></label><br>
+                <label for="sel1"><b>Formation : </b><?php echo $data['formations'][0]['IntituleF']; ?></label><br>
+                <hr>
                 <input type="hidden" name="nomForm" value="<?php echo $data['formations'][0]['IntituleF']; ?>">
-                <label for="sel1">Début: <?php echo $datedebut; ?></label>
+                <label for="sel1"><b>Début: </b><?php echo $datedebut; ?></label><br>
                 <input hidden name='start' value='<?php echo $datedebut; ?>'>
-                <label for="sel1"> Fin : <?php echo $datefin ?></label>
+                <label for="sel1"><b>Fin : </b><?php echo $datefin ?></label>
                 <input hidden name='end' value='<?php echo $datefin; ?>'>
-                <br>
+                <hr>
                 <label for="sel1"> Type de cours :</label><br>
-                <label for="sel1"> CM :</label>
-                <input checked="checked" onclick = "cacher();" type ='radio'  name ='Typec' id="CM" value='CM'>
-                <label for="sel1" > TD :</label>
-                <input onclick = "cacher();" type ='radio' name ='Typec' id="TD" value ='TD'><br>
+                <label for="sel1"> CM :</label><input checked="checked" onclick = "cacher();" type ='radio'  name ='Typec' id="CM" value='CM'>
+                <label for="sel1" > TD :</label><input onclick = "cacher();" type ='radio' name ='Typec' id="TD" value ='TD'>
+                <hr>
                 <input id="grp" name="grpcm" type="hidden" value="<?php echo $numgcm[0]['IdGCM']; ?>">
                 <div id ='afficher' style='display:none;'>
                     <label  for="sel1"> Groupe de TD :</label>
@@ -167,12 +164,11 @@
                         ?>
                     </select>
                 </div>   
-                <br>
+                <hr>
                 <label for="sel1"> Type de matière :</label><br>
-                <label for="sel1"> Standard :</label>
-                <input checked="checked" onclick = "cacher();" type ='radio'  name ='Typem' id="Standard" value='ST'>
-                <label for="sel1" > Spécial :</label>
-                <input onclick = "cacher();" type ='radio' name ='Typem' id="Special" value='SP'><br>
+                <label for="sel1"> Standard :</label><input checked="checked" onclick = "cacher();" type ='radio'  name ='Typem' id="Standard" value='ST'>
+                <label for="sel1" > Spécial :</label><input onclick = "cacher();" type ='radio' name ='Typem' id="Special" value='SP'><br>
+                <hr>
                 <div id ='afficher1' style='display:block;'>
                 <label for="sel1"> Matière CM :</label>
                 <select id='numm' class="form-control"  name="titleCM" onchange="change_valeurCM();" >
@@ -243,8 +239,8 @@
             </div>
         </div>
         <div class="col-sm-1"></div>
-        <div class="col-sm-3 jumbotron" id="heure">
-            <center><b>Heures :</b></center>
+        <div class="col-sm-3 well bg-global-gris" id="heure">
+            <p class="text-center"><b>Heures :</b></p>
         </div>
     </div>
 </div>

@@ -3,14 +3,21 @@
 
 require_once '../../Core/Model.php';
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$conn = dbConnect($var);
 
-$IdF = $_SESSION['criteria'];
+if(isset($_SESSION['criteria'])){
+    $IdF = $_SESSION['criteria'];
+}else{
+   $IdF = ""; 
+}
+
 
 if($IdF != ""){
-    $NumS = recupSeanceForm($IdF);
-    $res1 = Recupinfo($NumS);
+    $NumS = recupSeanceForm($conn, $IdF);
+    $res1 = Recupinfo($conn, $NumS);
     $data = array();
     $result = $res1;
     if(!empty($result)){
@@ -35,8 +42,7 @@ if($IdF != ""){
     echo utf8_encode (json_encode($data));
 }
 
-function recupSeanceForm($IdF){
-    $conn = dbConnect();
+function recupSeanceForm($conn, $IdF){
     $sql = "(SELECT NumS "
             . "FROM SEANCES, GROUPE_TD "
             . "WHERE GROUPE_TD.IdGTD=SEANCES.IdGTD "

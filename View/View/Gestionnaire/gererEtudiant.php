@@ -4,11 +4,9 @@
         <div class='row'>
             <div class='col-sm-2'></div>
             <div class='col-sm-8'>
-                <div class ='jumbotron' style="padding: 2%;">
+                <div class ='well bg-global-gris' style="padding: 2%;">
                     <div class='row'>
-                        <div class="col-sm-12">
-                            <p style="font-weight: bold; font-size: 20px">Filtres</p>
-                        </div>
+                        <p style="font-weight: bold; font-size: 20px" class="text-center">Filtres</p>
                     </div>
                     <div class='row'>
                         <form action="index.php?action=gererEtudiant" method="POST" onchange="this.submit();">
@@ -79,7 +77,7 @@
     </script>
     <div id="imprime">
         <div id="removeClass" class="table-wrapper-scroll-y my-custom-scrollbar">
-            <table class="table table-hover" id="tableR">
+            <table class="table table-hover bg-global-gris" id="tableR">
                 <thead class="header">
                     <tr>
                         <th>Identifiant</th>

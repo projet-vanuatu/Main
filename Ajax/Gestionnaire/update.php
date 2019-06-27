@@ -4,8 +4,10 @@
 require_once '../../Core/Manager.php';
 require_once '../../Core/Model.php';
 require_once '../../Core/Define.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$connect = dbConnect($var);
 
 if(isset($_POST["id"])){
     if(horaireSalle($connect, $_POST["id"],$_POST["start"],$_POST["end"])){
@@ -17,7 +19,7 @@ if(isset($_POST["id"])){
             $start = $_POST["start"];
             $end = $_POST["end"];
             
-            $infoSeance = getSeanceInfoLog($id);
+            $infoSeance = getSeanceInfoLog($connect, $id);
             $formation = $infoSeance['IntituleF'];
             $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
             $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
@@ -56,7 +58,7 @@ if(isset($_POST["id"])){
 }
 
 function horaireSalle($conn, $NumS,$DateDebut,$DateFin){
-    $IdS = IdSalle($NumS);
+    $IdS = IdSalle($conn, $NumS);
     $sql1="SELECT SEANCES.DateDebutSeance , SEANCES.DateFinSeance 
             FROM SEANCES
             WHERE SEANCES.NumS <> $NumS
@@ -94,7 +96,7 @@ function horaireSalle($conn, $NumS,$DateDebut,$DateFin){
 }
 
 function horaireEns($conn, $NumS,$DateDebut,$DateFin){
-    $IdEns = IdEns($NumS);
+    $IdEns = IdEns($conn, $NumS);
     $sql2="SELECT SEANCES.DateDebutSeance , SEANCES.DateFinSeance 
             FROM SEANCES, DISPENSE
             WHERE DISPENSE.NumS=SEANCES.NumS 
@@ -133,8 +135,7 @@ function horaireEns($conn, $NumS,$DateDebut,$DateFin){
     }
 }
 
-function IdSalle($NumS){
-    $conn = dbConnect(); 
+function IdSalle($conn, $NumS){
     $sql="SELECT SEANCES.IdS FROM SEANCES WHERE SEANCES.NumS = $NumS;";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
@@ -142,7 +143,7 @@ function IdSalle($NumS){
     return $res[0];
 }
 
-function IdEns($NumS){
+function IdEns($conn, $NumS){
     $conn = dbConnect(); 
     $sql1="SELECT DISPENSE.IdENS FROM DISPENSE WHERE DISPENSE.NumS = $NumS;";
     $stmt = $conn->prepare($sql1); 

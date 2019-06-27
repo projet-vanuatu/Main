@@ -3,15 +3,21 @@
 
 require_once '../../Core/Model.php';
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$conn = dbConnect($var);
 
-$IdEns = $_SESSION['criteria'];
+if(isset($_SESSION['criteria'])){
+    $IdEns = $_SESSION['criteria'];
+}else{
+    $IdEns = "";
+}
 
 if($IdEns != ""){
     
-    $NumS = RecupCoursEns($IdEns);
-    $res1 = Recupinfo($NumS);
+    $NumS = RecupCoursEns($conn, $IdEns);
+    $res1 = Recupinfo($conn, $NumS);
 
     $data = array();
     $result = $res1;
@@ -39,8 +45,7 @@ if($IdEns != ""){
     echo utf8_encode (json_encode($data));
 }
 
-function RecupCoursEns($IdEns){ 
-    $conn = dbConnect();
+function RecupCoursEns($conn, $IdEns){ 
     $sql = "SELECT NumS 
             FROM DISPENSE
             WHERE DISPENSE.IdENS=$IdEns";

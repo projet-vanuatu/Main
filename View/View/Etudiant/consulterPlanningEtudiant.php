@@ -8,6 +8,7 @@
             monthNames:['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
             dayNames:['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
             dayNamesShort:['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+            timeFormat: 'H:mm',
             buttonText: {
                 prev: "Précédent",
                 next: "Suivant",
@@ -36,13 +37,9 @@
 </script>
 <br><br>
 <div class="container">
-    <div class="row" style="width:100%;">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4"> 
-            <h2 style='font-weight:bold'><center>Mon Planning</center></h2>
-        </div>
-        <div class="col-sm-4"></div> 
-    </div>
-    <hr>
+    <h2 style="font-weight:bold;" class="text-center">Mon Planning</h2>
+</div>
+<hr>
+<div class="container-fluid">
     <div id="calendar"><script></script></div> 
 </div>

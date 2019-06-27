@@ -2,8 +2,10 @@
 @session_start();
 
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
 
-$conn = dbConnect();
+$var = dbCredentials();
+$conn = dbConnect($var);
 
 if(isset($_POST['id'])){
     $NumS=$_POST['id'];

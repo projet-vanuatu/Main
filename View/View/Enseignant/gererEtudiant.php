@@ -61,7 +61,7 @@
             <div class="col-sm-10">
                 <div id="imprime">
                     <div id="removeClass" class="table-wrapper-scroll-y my-custom-scrollbar">
-                        <table class="table table-hover" id="tableR">
+                        <table class="table table-hover bg-global-gris" id="tableR">
                             <thead class="header">
                                 <tr>
                                     <th>Identifiant</th>

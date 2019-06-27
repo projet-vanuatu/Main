@@ -3,17 +3,22 @@
 
 require_once '../../Core/Model.php';
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$conn = dbConnect($var);
 
-$IdS = $_SESSION['criteria'];
+if(isset($_SESSION['criteria'])){
+    $IdS = $_SESSION['criteria'];
+    $NumS = recupSeanceSalle($conn, $IdS);
+    $res1 = Recupinfo($conn, $NumS);
+    $data = array();
+    $result = $res1;
+}else{
+    $IdS = "";
+}
 
-$NumS = recupSeanceSalle($IdS);
-$res1 = Recupinfo($NumS);
-$data = array();
-$result = $res1;
-
-if($IdS != ""){
+if($IdS != ""){  
     if(!empty($result)){
         foreach($result as $row){
             $data[] = array(
@@ -36,8 +41,7 @@ if($IdS != ""){
     echo utf8_encode (json_encode($data));
 }
 
-function recupSeanceSalle($IdS){
-    $conn = dbConnect();
+function recupSeanceSalle($conn, $IdS){
     $sql = "SELECT NumS "
             . "FROM SEANCES "
             . "WHERE SEANCES.IdS=$IdS";

@@ -26,8 +26,8 @@
         <br>
         <div class="row">
             <div class="col-sm-12">
-                <div class="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table class="table table-hover">
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-hover bg-global-gris">
                         <thead>
                             <th>Nom salle</th><th>Capacité</th><th>Type</th><th>Site</th>
                         </thead>

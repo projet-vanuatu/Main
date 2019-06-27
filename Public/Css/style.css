@@ -5,10 +5,24 @@ body {
 /*Perso*/
 .bg-global{
     background-image: url("../Images/motifVanuatu.jpg");
+    z-index: -1;
+}
+
+hr{
+    width: 100%; 
+    color:gainsboro; 
+    height: 1px; 
+    background-color:gainsboro;
 }
 
 .bg-global-gris{
-    background-image: url("../Images/motifVanuatuGris.jpg");    
+    background-image: url("../Images/motifVanuatuGris.jpg");   
+}
+
+.bg-logo{
+   margin-top: 20px;
+   width: 273px;
+   height: 273px; 
 }
 
 /* Navbar */

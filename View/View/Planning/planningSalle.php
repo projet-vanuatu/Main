@@ -8,6 +8,7 @@
             monthNames:['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
             dayNames:['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
             dayNamesShort:['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+            timeFormat: 'H:mm',
             buttonText: {
                 prev: "Précédent",
                 next: "Suivant",
@@ -60,11 +61,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-2" style="margin-top:250px;">
-            <div class="jumbotron">
+            <div class="well">
                 <center><label  for="sel1">Paramètres d'affichage :</label></center>
                 <form action='index.php?action=consulterPlanning' method="POST">
                     <input type="hidden" name="type" value="planningSalle">
-                    <label for="sel1">Enseignant :</label>
+                    <label for="sel1">Salles :</label>
                     <select class="form-control" name="criteria" required>
                         <option value="">Choisir une salle..</option>
                     <?php             
@@ -77,23 +78,22 @@
                     ?>
                     </select>        
                     <br>
-                    <center><input class="btn btn-primary" type ='submit'  value ='Valider'></center>
+                    <center><input class="btn btn-success btn-block" type ='submit'  value ='Valider'></center>
                 </form>
             </div>
         </div>
         <div class="col-sm-8">  
             <center><h2 style='font-weight:bold'>Planning des salles</h2></center>
-            <br>
+            <hr>
             <div id="calendar"><script></script></div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2" style="margin-top:100px;">
             <input type="hidden" id="statut" value="<?php echo isset($_SESSION['request']['controller']) ? $_SESSION['request']['controller'] : ""; ?>">
         <?php 
         if(isset($_SESSION['request']['controller']) && $_SESSION['request']['controller'] !== 'Etudiant' && $_SESSION['request']['controller'] !== 'Authentification'){
         ?>
-            <div class=" well" style="height:28%;"></div>
-            <div id="reserv" class="jumbotron" style="font-size:0.8vw;">
-            <center><label  for="sel1">Reservations :</label></center>
+            <div id="reserv" class="well" style="font-size:0.8vw;">
+            <center><label  for="sel1">Matériel(s) :</label></center>
         <?php 
         }
         ?>

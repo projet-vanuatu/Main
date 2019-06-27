@@ -22,7 +22,7 @@
                         </select>
                     </div>
                     <!-- Fichier -->
-                    <label>Sélectionner vôtre fichier</label>
+                    <label>Sélectionner le fichier CSV</label>
                     <input type="file" class="custom-file-input" name="file" required><br>
                     <!-- Valider -->
                     <input type="submit" class="btn btn-success btn-block" value="Valider">

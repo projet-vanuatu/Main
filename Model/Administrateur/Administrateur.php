@@ -162,21 +162,36 @@ function addTD($data){
 }
 
 function deleteFormation($idFormation){
-    $db = dbConnect();
-    
+    $db = dbConnect();   
     //désinscrire étudiants à formation et CM
     $sql = "UPDATE ETUDIANT SET IdGCM = NULL, IdF = NULL WHERE IdF = $idFormation";
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $stmt->closeCursor();
-    
-    //suprimer les séances CM
-    $idGCM = getIdGcm($idFormation);
-    $sql = "UPDATE SEANCES SET IdGCM = NULL WHERE IdGCM = $idGCM;";
+    $stmt->closeCursor();   
+    //récuperer l'id du groupe CM de la formation
+    $idGCM = getIdGcm($idFormation);  
+    //Récuperer toutes les séances
+    $sql = "SELECT s.NumS FROM SEANCES s, GROUPE_CM g WHERE s.IdGCM = g.IdGCM AND s.IdGCM = $idGCM UNION "
+            . "SELECT s.NumS FROM SEANCES s, GROUPE_TD td WHERE s.IdGTD = td.IdGTD AND td.IdGTD IN "
+            . "(SELECT IdGTD FROM GROUPE_TD WHERE IdF = $idFormation);";
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $stmt->closeCursor();   
-    
+    $seances = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->closeCursor(); 
+    //Supprimer clés étrangères de séances
+    for($i=0;$i<=count($seances)-1;$i++){
+        $idSeance = $seances[$i]['NumS'];
+        $sql = "DELETE FROM DISPENSE WHERE NumS = $idSeance";
+        $db->exec($sql);
+        $stmt->closeCursor();
+        $sql = "DELETE FROM RESERVER WHERE NumS = $idSeance";
+        $db->exec($sql);
+        $stmt->closeCursor();
+    }
+    //Suppréssion des séances
+    $sql = "DELETE FROM SEANCES WHERE IdGCM = $idGCM;";
+    $db->exec($sql);
+    $stmt->closeCursor();      
     //désinscrire étudiants aux groupes de td et supprimer séances
     $arrayGroupID = getTD($idFormation);
     $newArrayGroupID = rebuildArray($arrayGroupID, 'IdGTD');  
@@ -184,13 +199,14 @@ function deleteFormation($idFormation){
         retirerEtudiantTD($db, $value);
         supprimerSeancesTD($db, $value);
     }
-    
-    //déssafecter l'UE
-    $sql = "UPDATE UNITE_ENSEIGNEMENT SET IdF = NULL WHERE IdF = $idFormation";
-    $stmt = $db->prepare($sql);
+    //Supprimer les UEs
+    $stmt = $db->prepare("SELECT IdUE FROM UNITE_ENSEIGNEMENT WHERE IdF = $idFormation;");
     $stmt->execute();
-    $stmt->closeCursor();
-       
+    $ues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    for($i=0;$i<=count($ues)-1;$i++){
+        $idUE = $ues[$i]['IdUE'];
+        deleteUE($idUE);
+    }       
     //Supprimer la formation et les groupes appartenants
     $sql = "DELETE FROM GROUPE_TD WHERE IdF = $idFormation;";
     $db->exec($sql);

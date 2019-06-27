@@ -49,9 +49,8 @@ function writeLog($action = 'N/A', $idAction = 'N/A', $path = null){
         $path = "./Logs/";
     }
     $fil = "Log.txt";
-    $entire = $path.$fil;
-    $file = fopen($entire, 'a');    
-    if($file){
+    $entire = $path.$fil;    
+    if($file = fopen($entire, 'a')){
         $dateTime = "[".date('d/m/Y H:i:s')."]";
         $ip = "[".$_SERVER['REMOTE_ADDR']."]";
         $port = "[".$_SERVER['REMOTE_PORT']."]";
@@ -192,13 +191,11 @@ function getEtudiantTDList($id){
     return $res;
 }
 
-
 /*
  * Recherche planning
  */
 
-function getSeanceInfoLog($id){
-    $conn = dbConnect();
+function getSeanceInfoLog($conn, $id){
     $Resultat[0] = "";
     $sql ="SELECT SEANCES.NumS ,MATIERES.IntituleM AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
     FROM MATIERES , SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT ,SITE , FORMATION 
@@ -272,8 +269,8 @@ function getSeanceInfoLog($id){
     return $Resultat;
 }
 
-function Recupinfo($NumS){
-    $conn = dbConnect(); 
+function Recupinfo($conn, $NumS){
+    $Resultat = "";
     for($i=0;$i<=count($NumS)-1;$i++){                                          
         $sql ="SELECT SEANCES.NumS ,MATIERES.IntituleM AS title, GROUPE_TD.NumGroupTD AS groupe, SALLE.NomS , ENSEIGNANT.NomENS , ENSEIGNANT.PrenomENS, SEANCES.DateDebutSeance , SEANCES.DateFinSeance , SITE.NomSITE , FORMATION.IntituleF, MATIERES.CouleurM AS couleur
         FROM MATIERES , SEANCES, GROUPE_TD, SALLE , DISPENSE , ENSEIGNANT ,SITE , FORMATION 

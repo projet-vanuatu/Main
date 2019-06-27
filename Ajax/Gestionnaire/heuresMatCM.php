@@ -2,12 +2,15 @@
 @session_start();
 
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
+
+$var = dbCredentials();
+$conn = dbConnect($var);
 
 //Fonction de recherche du materiel équipé dans la salle
 if(isset($_POST["numm"]) && !empty($_POST["numm"])){
     $numm = $_POST["numm"];
     $idf = $_SESSION['formationPlanning'];
-    $conn = dbConnect();
     $sql = "SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(timediff(SEANCES.DateFinSeance, SEANCES.DateDebutSeance)))) AS HRest, MATIERES.NbHeuresFixees
             FROM SEANCES, GROUPE_CM, MATIERES 
             WHERE MATIERES.NumM=$numm

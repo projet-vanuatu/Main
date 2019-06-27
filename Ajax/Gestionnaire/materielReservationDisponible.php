@@ -2,10 +2,13 @@
 
 require_once '../../Core/Manager.php';
 require_once '../../Core/Define.php';
+require_once '../../Config/Config.php';
+
+$var = dbCredentials();
+$conn = dbConnect($var);
 
 //Fonction de recherche du materiel disponible en fonction de la date
 if(isset($_POST["ids"]) && !empty($_POST["ids"])){
-    $conn= dbConnect();
     $id=$_POST["ids"];
     $sql = "SELECT DateDebutSeance AS debut, DateFinSeance AS fin FROM SEANCES WHERE NumS=$id";
     $stmt = $conn->prepare($sql); 
@@ -15,7 +18,6 @@ if(isset($_POST["ids"]) && !empty($_POST["ids"])){
     $debut=$resH['debut'];
     $fin=$resH['fin'];
     
-    $conn = dbConnect(); 
     $sql1="SELECT DISTINCT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat
             FROM  MATERIELS
             WHERE MATERIELS.IdS IS NULL

@@ -12,12 +12,12 @@
         
     <body class="bg-global">
         <div class="myNavbar">
-            <div class="navbar-header">
+            <div class="navbar-header" style="width:52px; float:left;">
                 <img src="Public/Images/logo.JPG" style="width:52px;" alt=""/>
             </div>
             <a href="index.php?action=index">Accueil</a>
             <div class="subnav" id="subnavCreation">
-                <button class="subnavbtn" id="btnCreation">Création &nbsp;<i class="fa fa-caret-down"></i></button>
+                <button class="subnavbtn" id="btnCreation">Création <span><img src="Public/Glyphicons/fleche.png"  style="height: 8px;" alt=""/></span></button>
                 <div class="subnav-content" id="navCreation">
                     <a href="index.php?action=creerUtilisateur">Utilisateurs</a>
                     <a href="index.php?action=creerFormation">Formations</a>
@@ -27,7 +27,7 @@
                 </div>
             </div> 
             <div class="subnav" id="subnavGestion">
-                <button class="subnavbtn" id="btnGestion">Gestion &nbsp;<i class="fa fa-caret-down"></i></button>
+                <button class="subnavbtn" id="btnGestion">Gestion <span><img src="Public/Glyphicons/fleche.png"  style="height: 8px;" alt=""/></span></button>
                 <div class="subnav-content" id="navGestion">
                     <a href="index.php?action=gererUtilisateur">Utilisateurs</a>
                     <a href="index.php?action=gererFormation">Formations</a>
@@ -38,7 +38,7 @@
             </div>
             <a href="index.php?action=administration">Gestion des CSV</a>
             <div class="subnav">
-                <button class="subnavbtn">Consulter planning &nbsp;<i class="fa fa-caret-down"></i></button>
+                <button class="subnavbtn">Consulter planning <span><img src="Public/Glyphicons/fleche.png"  style="height: 8px;" alt=""/></span></button>
                 <div class="subnav-content">
                     <a href="index.php?action=consulterPlanning&type=planningFormation">Par formation</a>
                     <a href="index.php?action=consulterPlanning&type=planningSalle">Par salle</a>
@@ -46,13 +46,16 @@
                 </div>
             </div>
             <div class="subnav2">
-                    <a href = "index.php?action=deconnection" class="subnavbtn2">Deconnexion&nbsp;<span class="glyphicon glyphicon-log-in"></span></a>
+                    <a href = "index.php?action=deconnection" class="subnavbtn2">Déconnexion&nbsp;
+                        <span><img src="Public/Glyphicons/deconnexion.png"  style="height: 15px;" alt=""/></span></a>
             </div>
             <div class="subnav2">
-                <button class="subnavbtn3"><span class="glyphicon glyphicon-user"></span>&nbsp;<?php echo $_SESSION['prenom'].' '.$_SESSION['nom']; ?></button>
+                <button class="subnavbtn3"><span><img src="Public/Glyphicons/utilisateur.png" style="height: 15px;" alt=""/></span>
+                    &nbsp;<?php echo $_SESSION['prenom'].' '.$_SESSION['nom']; ?></button>                   
             </div>
         </div>
     	<?php 
             echo $content;
         ?>
+    </body>
 </html>

@@ -4,8 +4,10 @@
 require_once '../../Core/Manager.php';
 require_once '../../Core/Model.php';
 require_once '../../Core/Define.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$connect = dbConnect($var);
 
 //delete.php
 
@@ -15,7 +17,7 @@ if(isset($_POST["id"])){
     
     $id = $_POST["id"];
     
-    $infoSeance = getSeanceInfoLog($id);
+    $infoSeance = getSeanceInfoLog($connect, $id);
     $formation = $infoSeance['IntituleF'];
     $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
     $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));

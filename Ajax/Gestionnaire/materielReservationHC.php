@@ -2,6 +2,10 @@
 
 require_once '../../Core/Manager.php';
 require_once '../../Core/Define.php';
+require_once '../../Config/Config.php';
+
+$var = dbCredentials();
+$conn = dbConnect($var);
 
 if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
         date_default_timezone_set(TIMEZONE);
@@ -11,7 +15,6 @@ if(!empty($_POST["date"]) && !empty($_POST["debut"]) && !empty($_POST["fin"])){
         $debut = date("Y/m/d H:i:s", strtotime("$date $debut"));
         $fin = date("Y/m/d H:i:s", strtotime("$date $fin"));
        
-        $conn = dbConnect();  
         $sql="SELECT DISTINCT MATERIELS.IdMat, MATERIELS.numSerie , MATERIELS.TypeMat
                FROM  MATERIELS
                WHERE MATERIELS.IdS IS NULL

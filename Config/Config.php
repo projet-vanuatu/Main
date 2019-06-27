@@ -1,21 +1,9 @@
 <?php
 
-function dbPDOCredentials(){
-    return array('host' => 'host',
-                'dbName' => 'name',
-                'identifiant' => 'id',
-                'mdp' => 'mdp'
+function dbCredentials(){
+    return array('host' => 'localhost',
+                'dbName' => 'projetphp',
+                'identifiant' => 'projetphp',
+                'mdp' => 'franke2019'
             );
-}
-
-function dbSQLiCredentials(){
-    return array('host' => 'host',
-                'dbName' => 'name',
-                'identifiant' => 'id',
-                'mdp' => 'mdp'
-            );
-}
-
-function logFilePath(){
-    return FPUBLIC.DS.'Logs'.DS.'log.txt';
 }

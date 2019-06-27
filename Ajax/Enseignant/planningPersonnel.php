@@ -4,12 +4,14 @@
 
 require_once '../../Core/Manager.php';
 require_once '../../Core/Model.php';
+require_once '../../Config/Config.php';
 
-$connect = dbConnect();
+$var = dbCredentials();
+$connect = dbConnect($var);
 
 $IdEns=$_SESSION['id'];
-$NumS = RecupCoursEns($IdEns);
-$res1 = Recupinfo($NumS);
+$NumS = RecupCoursEns($connect, $IdEns);
+$res1 = Recupinfo($connect, $NumS);
 $data = array();
 
 $result = $res1;
@@ -34,8 +36,7 @@ if(!empty($result)){
     $data = array();       
 }
 
-function RecupCoursEns($IdEns){ 
-    $conn = dbConnect();
+function RecupCoursEns($conn, $IdEns){ 
     $sql = "SELECT NumS 
             FROM DISPENSE
             WHERE DISPENSE.IdENS=$IdEns";

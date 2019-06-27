@@ -10,6 +10,7 @@ if($data['selectedTD'] != ""){
     $selectedTD = "";
 }
 ?>
+<br><br>
 <div class="container">
     <h3><center>Affectation des étudiants aux groupes de TD</center></h3>
     <div class="row content">
@@ -31,7 +32,7 @@ if($data['selectedTD'] != ""){
             </div>
         </form>
     </div>
-
+    <hr>
     <div class="row content">
         <div class="col-sm-5 sidenav"> 
            <label for="sel1">Liste des étudiants non affecctés à un groupe de TD :</label>
@@ -74,7 +75,7 @@ if($data['selectedTD'] != ""){
                     ?> 
                 </select>
             </form>
-            <select multiple class="form-control" id="groupTD" style="height:450px;" onchange="changeURL(id, value);">
+            <select multiple class="form-control" id="groupTD" style="height:465px;" onchange="changeURL(id, value);">
                 <?php
                 for($i=0;$i<=count($data['aff'])-1;$i++){
                 ?>

@@ -3,11 +3,15 @@
 
 require_once '../../Core/Model.php';
 require_once '../../Core/Manager.php';
+require_once '../../Config/Config.php';
+
+$var = dbCredentials();
+$connect = dbConnect($var);
 
 $IdE=$_SESSION['id'];
 
-$NumS = RecupCours($IdE);
-$res1 = Recupinfo($NumS);
+$NumS = RecupCours($connect, $IdE);
+$res1 = Recupinfo($connect, $NumS);
 $data = array();
 $result = $res1;
 
@@ -33,8 +37,7 @@ if(!empty($result)){
 
 echo utf8_encode (json_encode($data));
 
-function RecupCours($IdE){       
-    $conn = dbConnect();
+function RecupCours($conn, $IdE){       
     $sql = "    (SELECT DISTINCT SEANCES.NumS
                 FROM SEANCES, ETUDIANT
                 WHERE SEANCES.IdGCM=ETUDIANT.IdGCM

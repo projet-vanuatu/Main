@@ -118,9 +118,15 @@ function creerReservation($params = null){
         insertReservation($_POST);
         $id = getLastID('IdRes', 'RESERVER');
         $infoSeance = getSeanceInfoLog($_POST['NumS']);
-        $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
-        $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
-        $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
+        if($infoSeance){          
+            $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
+            $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
+            $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));           
+        }else{
+            $date = "";
+            $debut = "";
+            $fin = "";               
+        }
         $action = 'ID réservation : '.$id.' - Enseignant : '.$_POST['IdENS'].' - Matériel : '.$_POST['IdMat'].' - Séannce du '.$date.' de '.$debut.' à '.$fin;
         writeLog('Créer une réservation séance : ', $action);
         redirect(GEST, 'gererReservation');
@@ -140,9 +146,15 @@ function modifierReservation($params){
     if(!empty($_POST)){
         $id = $_POST['IdRes'];
         $infoSeance = getSeanceInfoLog($_POST['NumS']);
-        $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
-        $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
-        $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
+        if($infoSeance){          
+            $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
+            $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
+            $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));           
+        }else{
+            $date = "";
+            $debut = "";
+            $fin = "";               
+        }
         $mateirel = $_POST['IdMat'];
         $action = 'ID réservation (original) : '.$id.' // Valeur après mise à jour // Matériel : '.$_POST['IdMat'].' - Pour : '.$_POST['IdENS'].' - le : '
                 .$date.' de '.$debut.' à '.$fin;

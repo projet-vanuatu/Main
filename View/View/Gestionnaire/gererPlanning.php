@@ -20,6 +20,7 @@ if(isset($_SESSION['enseignantPlanning'])){
             monthNames:['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
             dayNames:['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
             dayNamesShort:['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+            timeFormat: 'H:mm',
             buttonText: {
                 prev: "Précédent",
                 next: "Suivant",
@@ -117,8 +118,8 @@ if(isset($_SESSION['enseignantPlanning'])){
         <div class="col-sm-2">         
             <div class="well" style="margin-top: 200px;">
                 <label for="sel1">Critères :</label>            
-                <form  action ='index.php?action=gererPlanning' method='POST'>
-                    <label   for="sel1">Formation :</label>
+                <form action ='index.php?action=gererPlanning' method='POST'>
+                    <label for="sel1">Formation :</label>
                     <select class="form-control"  name="idf" required>
                         <option value=''>Selectionnez une formation</option>
                         <?php             
@@ -146,7 +147,7 @@ if(isset($_SESSION['enseignantPlanning'])){
                     <input hidden value="<?php echo $idfs?>" id='form'>
                     <input hidden value="<?php echo $idenss ?>" id='ens'>
                     <br>
-                    <input class="btn btn-success btn-block" type ='submit'  value ='Valider'>
+                    <input class="btn btn-success btn-block" type ='submit' value ='Valider'>
                 </form>          
             </div>      
         </div>

@@ -23,7 +23,7 @@
             <a href="index.php?action=index">Accueil</a>
             <a href="index.php?action=consulterPlanningEnseignant">Consulter mon planning</a>
             <div class="subnav">
-                <button class="subnavbtn">Consulter planning &nbsp;<i class="fa fa-caret-down"></i></button>
+                <button class="subnavbtn">Consulter planning <span><img src="Public/Glyphicons/fleche.png"  style="height: 8px;" alt=""/></span></button>
                 <div class="subnav-content">
                     <a href="index.php?action=consulterPlanning&type=planningFormation">Par formation</a>
                     <a href="index.php?action=consulterPlanning&type=planningSalle">Par salle</a>
@@ -32,14 +32,15 @@
             </div>
             <a href="index.php?action=gererEtudiant">Liste étudiant</a>
             <div class="subnav2">
-                <a href = "index.php?action=deconnection" class="subnavbtn2">Deconnexion&nbsp;<span class="glyphicon glyphicon-log-in"></span></a>
+                <a href = "index.php?action=deconnection" class="subnavbtn2">Déconnexion <span><img src="Public/Glyphicons/deconnexion.png"  style="height: 15px;" alt=""/></span></a>
             </div>
             <div class="subnav2">
-                <button class="subnavbtn3"><span class="glyphicon glyphicon-user"></span>&nbsp;<?php echo $_SESSION['prenom'].' '.$_SESSION['nom']; ?></button>
+                <button class="subnavbtn3"><span><img src="Public/Glyphicons/utilisateur.png" style="height: 15px;" alt=""/></span>&nbsp;<?php echo $_SESSION['prenom'].' '.$_SESSION['nom']; ?></button>
             </div>
         </div>
     	<?php 
             echo $content;
         ?>
+    </body>
 </html>
 

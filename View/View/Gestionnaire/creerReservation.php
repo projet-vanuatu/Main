@@ -131,7 +131,8 @@ if(isset($data['formulaire'])){
                 ?>
                 <div class="form-group">
                     <label for="pwd">Enseignant :</label>                        
-                    <select class="form-control" name="IdENS" id="idens" onchange="change_valeurS();" required>
+                    <select class="form-control" name="IdENS" id="idens" onchange="change_valeurS();" required 
+                        <?php echo ($action == 'modifier' && $btn == 'Ajouter') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                         <option value="">Choisir un enseignant</option>
                             <?php 
                                 for ($i=0;$i<=count($data['enseignants'])-1;$i++){
@@ -145,7 +146,8 @@ if(isset($data['formulaire'])){
                 </div>
                 <div class="form-group" id="seanceDispo">
                     <label for="pwd">Séance :</label>
-                    <select class="form-control" name="NumS" id="ids" required>
+                    <select class="form-control" name="NumS" id="ids" required 
+                        <?php echo ($action == 'modifier' && $btn == 'Ajouter') ? "style='pointer-events:none; opacity:0.7;'" : NULL; ?>>
                         <option>Sélectionner une séance</option>
                     </select>
                 </div>

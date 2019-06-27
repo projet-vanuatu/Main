@@ -13,9 +13,14 @@ require_once FPUBLIC.DS.'Config/Config.php';
  * Fonction qui redirige sur le controller et l'action demandée
  */
 function dispatcher(){
-    date_default_timezone_set(TIMEZONE);  
-    $action = $_GET['action'];
-    $params = parser($_GET);
+    date_default_timezone_set(TIMEZONE);
+    if(isset($_GET['action'])){
+        $action = $_GET['action'];
+        $params = parser($_GET);
+    }else{
+        $action = 'index';
+        $params = "";
+    }   
     //consulter planning hors connexion
     if(isset($_SESSION['id'])){
         $expireConection = checkConnection();

@@ -7,10 +7,13 @@
  * PDO connection
  * @return \PDO
  */
-function dbConnect(){
+function dbConnect($var = null){
     if(!isset($GLOBALS['dbPDO'])){
-//       $db = new PDO('mysql:host=localhost;dbname=db_21100905;charset=utf8', '21100905', '35952H');
-       $db = new PDO('mysql:host=localhost;dbname=projetphp;charset=utf8', 'projetphp', 'franke2019');
+        if(is_null($var)){
+            require_once './Config/Config.php';
+            $var = dbCredentials();           
+        }
+       $db = new PDO("mysql:host=".$var['host'].";dbname=".$var['dbName'].";charset=utf8", $var['identifiant'], $var['mdp']);
        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
        $GLOBALS['dbPDO'] = $db;
     }else{
@@ -23,11 +26,14 @@ function dbConnect(){
  * Mysqli connection
  * @return \MySqli
  */
-function bdConnect(){
+function bdConnect($var = null){
     if(!isset($GLOBALS['dbSQLi'])){
-//        $db = mysqli_connect('localhost','21100905','35952H','db_21100905');
-        $db = mysqli_connect('localhost','projetphp','franke2019','projetphp');
-        $GLOBALS['dbSQLi'] = $db;;
+        if(is_null($var)){
+            require_once './Config/Config.php';
+            $var = dbCredentials();           
+        }
+        $db = mysqli_connect($var['host'], $var['identifiant'], $var['mdp'], $var['dbName']);
+        $GLOBALS['dbSQLi'] = $db;
     }else{
         $db = $GLOBALS['dbSQLi'];
     }
