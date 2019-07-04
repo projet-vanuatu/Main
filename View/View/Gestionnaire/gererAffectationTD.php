@@ -62,7 +62,7 @@ if($data['selectedTD'] != ""){
             <label for="sel1">Groupe de TD:</label>
             <form action="index.php?action=gererAffectationTD&type=td" method="POST">
                 <select class="form-control" id="idGroupTD" name ='IdGTD' onchange="this.form.submit()">
-                    <option >Choisir un groupe de TD </option>
+                    <option value=''>Choisir un groupe de TD</option>
                      <?php
                      for($i=0;$i<=count($data['td'])-1;$i++){
                     ?>

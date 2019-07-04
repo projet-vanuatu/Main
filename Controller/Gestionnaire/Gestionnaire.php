@@ -29,25 +29,26 @@ function gererAffectationTD($params = null){
             renderView('gererAffectationTD', array('formations' => $arrayFormations, 'selectedFormation' => $selectedFormation,
                         'nonAff' => $arrayEtudiantNonAff, 'td' => $td, 'selectedTD' => $selectedTD, 'aff' => $arrayEtudiantTD));
         }
-    }else{
-        renderView('gererAffectationTD', array('formations' => $arrayFormations, 'selectedFormation' => "",
-                    'nonAff' => array(), 'td' => array(), 'selectedTD' => "", 'aff' => array()));            
     }
+    renderView('gererAffectationTD', array('formations' => $arrayFormations, 'selectedFormation' => "",
+                'nonAff' => array(), 'td' => array(), 'selectedTD' => "", 'aff' => array()));            
 }
 
-function affecterEtudiant($params){
-    if(!empty($params['id']) && !empty($params['td'])){
-        modelLoader();
-        addEtudiantTD($params['id'], $params['td']);
-        $numTD = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $params['td']);
-        $form = getFormationFromTD($params['td']);
-        writeLog('Affécté TD : ', $params['id']." à ".$form." ".$numTD);
+function affecterEtudiant($params = null){
+    if(isset($params['id']) && isset($params['td'])){
+        if($params['id'] != "" && $params['td'] != ""){
+            modelLoader();
+            addEtudiantTD($params['id'], $params['td']);
+            $numTD = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $params['td']);
+            $form = getFormationFromTD($params['td']);
+            writeLog('Affécté TD : ', $params['id']." à ".$form." ".$numTD);
+        }
     }
     redirect(GEST, 'gererAffectationTD');
 }
 
-function desaffecterEtudiant($params){
-    if(!empty($params['id']) && !empty($params['td'])){
+function desaffecterEtudiant($params = null){
+    if(isset($params['id']) && isset($params['td'])){
         modelLoader();
         $numTD = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $params['td']);
         $form = getFormationFromTD($params['td']);
