@@ -10,6 +10,8 @@ function index(){
 
 function gererAffectationTD($params = null){    
     modelLoader();
+    $selectedTD = "";
+    $arrayEtudiantTD = array();
     $arrayFormations = getFormations();    
     isset($_POST['IdF']) ? $_SESSION['formation'] = $_POST['IdF'] : "";
     isset($_POST['IdF']) ? $_SESSION['td'] = "" : "";   
@@ -117,11 +119,12 @@ function creerReservation($params = null){
     if(!empty($_POST)){
         insertReservation($_POST);
         $id = getLastID('IdRes', 'RESERVER');
-        $infoSeance = getSeanceInfoLog($_POST['NumS']);
+        $db = dbConnect();
+        $infoSeance = getSeanceInfoLog($db, $_POST['NumS']);
         if($infoSeance){          
-            $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
-            $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
-            $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));           
+            $date = date("d/m/Y", strtotime($infoSeance[0]['DateDebutSeance']));
+            $debut = date("H:i", strtotime($infoSeance[0]['DateDebutSeance']));
+            $fin = date("H:i", strtotime($infoSeance[0]['DateFinSeance']));           
         }else{
             $date = "";
             $debut = "";
@@ -145,7 +148,8 @@ function modifierReservation($params){
     modelLoader();
     if(!empty($_POST)){
         $id = $_POST['IdRes'];
-        $infoSeance = getSeanceInfoLog($_POST['NumS']);
+        $db = dbConnect();
+        $infoSeance = getSeanceInfoLog($db, $_POST['NumS']);
         if($infoSeance){          
             $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
             $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
@@ -204,7 +208,7 @@ function creerSeance($params = null){
             $td = "CM";
         }else if($_POST['Typec']=='TD' && $_POST['Typem']=='ST'){
             insertSeanceTD($_POST);
-            $matiere = getAttrTable('IntituleM', 'MATIERES', 'NumM', $_POST['titleCM']);
+            $matiere = getAttrTable('IntituleM', 'MATIERES', 'NumM', $_POST['titleTD']);
             $td = getAttrTable('NumGroupTD', 'GROUPE_TD', 'IdGTD', $_POST['grptd']);
         }else if($_POST['Typec']=='TD' && $_POST['Typem']=='SP'){
             insertSeanceTDspe($_POST);

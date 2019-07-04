@@ -36,7 +36,7 @@ if(isset($data['formulaire'])){
         <div class="col-sm-4">
             <form  action="<?php echo $actionForm; ?>" method="POST">
                 <div class="form-group">
-                    <label for="sel1">Type de matériel:</label>
+                    <label for="sel1">Numéro de série :</label>
                     <input type="text" name="numSerie" class="form-control" placeholder="XVE4038AE.." 
                            value="<?php echo isset($data['formulaire']['numSerie']) ? $data['formulaire']['numSerie'] : ""; ?>" required>
                 </div>

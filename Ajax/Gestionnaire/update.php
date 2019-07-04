@@ -10,24 +10,23 @@ $var = dbCredentials();
 $connect = dbConnect($var);
 
 if(isset($_POST["id"])){
-    if(horaireSalle($connect, $_POST["id"],$_POST["start"],$_POST["end"])){
-        if(horaireEns($connect, $_POST["id"],$_POST["start"],$_POST["end"])){
+    $id = $_POST["id"];
+    $start = $_POST["start"];
+    $end = $_POST["end"];
+    if(horaireSalle($connect, $id,  $start, $end)){
+        if(horaireEns($connect,  $id,  $start, $end)){
             
             date_default_timezone_set(TIMEZONE);
             
-            $id = $_POST["id"];
-            $start = $_POST["start"];
-            $end = $_POST["end"];
-            
             $infoSeance = getSeanceInfoLog($connect, $id);
-            $formation = $infoSeance['IntituleF'];
-            $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
-            $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
-            $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
-            $enseignant = $infoSeance['NomENS']." ".$infoSeance['PrenomENS'];
-            $matiere = $infoSeance['title'];
-            $td = $infoSeance['groupe'];
-            $salle = $infoSeance['NomS'];
+            $formation = $infoSeance[0]['IntituleF'];
+            $date = date("d/m/Y", strtotime($infoSeance[0]['DateDebutSeance']));
+            $debut = date("H:i", strtotime($infoSeance[0]['DateDebutSeance']));
+            $fin = date("H:i", strtotime($infoSeance[0]['DateFinSeance']));
+            $enseignant = $infoSeance[0]['NomENS']." ".$infoSeance[0]['PrenomENS'];
+            $matiere = $infoSeance[0]['title'];
+            $td = $infoSeance[0]['groupe'];
+            $salle = $infoSeance[0]['NomS'];
             
             $newDate = date("d/m/Y", strtotime($start));
             $newDebut = date("H:i", strtotime($start));

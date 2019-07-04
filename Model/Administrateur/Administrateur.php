@@ -360,7 +360,6 @@ function InsererEtudiant($IdE,$NomE,$PrenomE,$IdF,$MdpE) {
     }else{
         return false;
     }
-
 }
 
 // --- Insertion enseignant --- //
@@ -542,7 +541,8 @@ function modifierAdmin($MdpA,$IdA,$NomA,$PrenomA,$StatuA){
 
 function getMatieres(){
     $conn = dbConnect();
-    $sql = "SELECT m.NumM, m.IntituleM, m.TypeM, m.NbHeuresFixees, m.IdUE, m.IdDomaine, u.IntituleUE FROM MATIERES m, UNITE_ENSEIGNEMENT u WHERE m.IdUE = u.IdUE;";
+    $sql = "SELECT m.NumM, m.IntituleM, m.TypeM, m.NbHeuresFixees, m.IdUE, m.IdDomaine, f.IntituleF, u.IntituleUE "
+            . "FROM MATIERES m, UNITE_ENSEIGNEMENT u, FORMATION f WHERE m.IdUE = u.IdUE AND u.IdF = f.IdF;";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -986,7 +986,11 @@ function insertEtudiantMultiple($array, $idForm){
         if(empty($numEtudiant)){
             $numEtudiant = generateNumEtudiant();
         }
-        InsererEtudiant($numEtudiant, $nomEtudiant, $prenomEtudiant, $idForm, $mdp);
+        $inserer = InsererEtudiant($numEtudiant, $nomEtudiant, $prenomEtudiant, $idForm, $mdp);
+        if(!$inserer){
+            $numEtudiant = generateNumEtudiant();
+            InsererEtudiant($numEtudiant, $nomEtudiant, $prenomEtudiant, $idForm, $mdp);
+        }
     }  
 }
 

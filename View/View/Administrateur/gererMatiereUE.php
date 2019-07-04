@@ -80,7 +80,8 @@ if(isset($data['active'])){
                     <th>Intitulé</th>
                     <th>Type</th>
                     <th>Heures fixées</th>
-                    <th>UE</th>                  
+                    <th>Unité d'enseignement</th>
+                    <th>Formation</th> 
                 </tr>
             </thead>
             <tbody id="myTable2">
@@ -88,10 +89,11 @@ if(isset($data['active'])){
                 for($i=0;$i<=count($data['matieres'])-1;$i++){
                 ?>
                 <tr>
-                    <td><?php echo ($data['matieres'][$i]['IntituleM']); ?></td>
-                    <td><?php echo ($data['matieres'][$i]['TypeM']); ?></td>
-                    <td><?php echo ($data['matieres'][$i]['NbHeuresFixees']); ?></td>
-                    <td><?php echo ($data['matieres'][$i]['IntituleUE']); ?></td> 
+                    <td><?php echo $data['matieres'][$i]['IntituleM']; ?></td>
+                    <td><?php echo $data['matieres'][$i]['TypeM']; ?></td>
+                    <td><?php echo $data['matieres'][$i]['NbHeuresFixees']; ?></td>
+                    <td><?php echo $data['matieres'][$i]['IntituleUE']; ?></td>
+                    <td><?php echo $data['matieres'][$i]['IntituleF']; ?></td>
                     <td>
                         <p>
                             <a href="<?php echo "index.php?action=modifierMatiere&id=".$data['matieres'][$i]['NumM']; ?>">

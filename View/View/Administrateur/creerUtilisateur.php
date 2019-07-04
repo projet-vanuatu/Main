@@ -127,7 +127,7 @@ if(isset($data['formulaire'])){
         <div class="row" style="margin-top:25px;">
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
-                <h2><center>Insertion Etudiant</center></h2>
+                <h2><center>Insertion Enseignant</center></h2>
             </div>
             <div class="col-sm-4">
                 <a href="index.php?action=gererUtilisateur&activeParams=enseignants"><button type="button" class="btn btn-primary" style="float:right;">

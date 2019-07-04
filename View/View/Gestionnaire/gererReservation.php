@@ -63,7 +63,7 @@
                                 <td><?php echo utf8_encode($data['reservations'][$i]['PrenomENS']); ?></td>
                                 <td><?php echo utf8_encode($data['reservations'][$i]['TypeMat']); ?></td> 
                                 <td><?php echo $data['reservations'][$i]['NumSerie']; ?></td>
-                                <td><?php echo utf8_encode($data['reservations'][$i]['IntituleM']); ?></td>
+                                <td><?php echo utf8_encode($data['reservations'][$i]['intitule']); ?></td>
                                 <td><?php echo $data['reservations'][$i]['resa']; ?></td>
                                 <td><?php echo $data['reservations'][$i]['date']; ?></td>
                                 <td><?php echo $data['reservations'][$i]['debut']; ?></td>

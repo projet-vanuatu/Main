@@ -98,7 +98,9 @@ function RecupererMateriel(){
 
 function RecupererReserver(){
     $conn = dbConnect();
-    $sql = "SELECT R.IdRes, R.IdENS, E.PrenomENS, E.NomENS, R.IdA, M.IdMat, M.TypeMat, M.NumSerie, S.NumS, MA.NumM, MA.IntituleM, DATE_FORMAT(S.DateDebutSeance, '%d/%m/%Y') AS date, DATE_FORMAT(S.DateDebutSeance, '%Hh%i') AS debut, DATE_FORMAT(S.DateFinSeance, '%Hh%i') AS fin , DATE_FORMAT(R.DateResa, '%d/%m/%Y') AS resa "
+    $sql = "SELECT R.IdRes, R.IdENS, E.PrenomENS, E.NomENS, R.IdA, M.IdMat, M.TypeMat, M.NumSerie, S.NumS, MA.NumM, MA.IntituleM as intitule, "
+            . "DATE_FORMAT(S.DateDebutSeance, '%d/%m/%Y') AS date, DATE_FORMAT(S.DateDebutSeance, '%Hh%i') AS debut, DATE_FORMAT(S.DateFinSeance, '%Hh%i') AS fin , "
+            . "DATE_FORMAT(R.DateResa, '%d/%m/%Y') AS resa "
             . "FROM RESERVER R,ENSEIGNANT E,SEANCES S, MATERIELS M, MATIERES MA "
             . "WHERE M.IdMat = R.IdMat "
             . "AND R.IdENS = E.IdENS "
@@ -106,8 +108,20 @@ function RecupererReserver(){
             . "AND S.NumM = MA.NumM ";
     $stmt = $conn->prepare($sql); 
     $stmt->execute();
-    $resResa = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $resResa;
+    $resCours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $sql = "SELECT R.IdRes, R.IdENS, E.PrenomENS, E.NomENS, R.IdA, M.IdMat, M.TypeMat, M.NumSerie, S.NumS, C.IdCSPE, C.IntituleCSPE as intitule,"
+            . " DATE_FORMAT(S.DateDebutSeance, '%d/%m/%Y') AS date, DATE_FORMAT(S.DateDebutSeance, '%Hh%i') AS debut, DATE_FORMAT(S.DateFinSeance, '%Hh%i') AS fin ,"
+            . " DATE_FORMAT(R.DateResa, '%d/%m/%Y') AS resa "
+            . "FROM RESERVER R,ENSEIGNANT E,SEANCES S, MATERIELS M, COURS_SPECIAUX C "
+            . "WHERE M.IdMat = R.IdMat "
+            . "AND R.IdENS = E.IdENS "
+            . "AND S.NumS = R.NumS "
+            . "AND S.IdCSPE = C.IdCSPE ";
+    $stmt = $conn->prepare($sql); 
+    $stmt->execute();
+    $resCoursSPe = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $res = array_merge($resCours, $resCoursSPe);
+    return $res;
 }
 
 function getReservation($id){

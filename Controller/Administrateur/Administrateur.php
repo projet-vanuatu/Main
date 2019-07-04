@@ -310,12 +310,17 @@ function modifierMateriel($params){
     renderView('creerMateriel', array('salles' => $arraySalle, 'formulaire' => $formulaire, 'active' => $params['activeParams']));         
 }
 
-function gererMateriel($params){
+function gererMateriel($params = null){
     modelLoader();
     $arrayMaterielAff = getMaterielsAff();
     $arrayMaterielNonAff = getMaterielsNonAff();
+    if(!is_null($params)){
+        $page = $params['activeParams'];
+    }else{
+        $page = "";
+    }
     renderView('gererMateriel', array('materielAff' => $arrayMaterielAff,
-        'materielNonAff' => $arrayMaterielNonAff, 'active' => $params['activeParams']));   
+        'materielNonAff' => $arrayMaterielNonAff, 'active' => $page));   
 }
 
 /* Sites */

@@ -170,22 +170,22 @@
                 <label for="sel1" > Spécial :</label><input onclick = "cacher();" type ='radio' name ='Typem' id="Special" value='SP'><br>
                 <hr>
                 <div id ='afficher1' style='display:block;'>
-                <label for="sel1"> Matière CM :</label>
-                <select id='numm' class="form-control"  name="titleCM" onchange="change_valeurCM();" >
-                    <option value ='' >Selectionnez une matière</option>
-                    <?php             
-                    for($i=0;$i<=count($nummcm)-1;$i++){
-                    ?>
-                        <Option value ="<?php echo $nummcm[$i]['NumM'] ?>"><?php echo utf8_encode($nummcm[$i]['IntituleM'])?></option>     
-                    <?php
-                    }
-                    ?>
-                </select>
+                    <label for="sel1"> Matière CM :</label>
+                    <select id='numm' class="form-control"  name="titleCM" onchange="change_valeurCM();" >
+                        <option value =''>Selectionnez une matière</option>
+                        <?php             
+                        for($i=0;$i<=count($nummcm)-1;$i++){
+                        ?>
+                            <Option value ="<?php echo $nummcm[$i]['NumM'] ?>"><?php echo utf8_encode($nummcm[$i]['IntituleM'])?></option>     
+                        <?php
+                        }
+                        ?>
+                    </select>
                 </div>
                 <div id ='afficher2' style='display:none;'>
                     <label  for="sel1"> Matière TD :</label>
                     <select class="form-control"  name="titleTD" id="num" onchange="change_valeurTD();">
-                        <option value ='' >Selectionnez une matière</option>
+                        <option value =''>Selectionnez une matière</option>
                         <?php             
                         for($i=0;$i<=count($nummtd)-1;$i++){
                         ?>

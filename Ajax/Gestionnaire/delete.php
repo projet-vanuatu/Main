@@ -18,14 +18,14 @@ if(isset($_POST["id"])){
     $id = $_POST["id"];
     
     $infoSeance = getSeanceInfoLog($connect, $id);
-    $formation = $infoSeance['IntituleF'];
-    $date = date("d/m/Y", strtotime($infoSeance['DateDebutSeance']));
-    $debut = date("H:i", strtotime($infoSeance['DateDebutSeance']));
-    $fin = date("H:i", strtotime($infoSeance['DateFinSeance']));
-    $enseignant = $infoSeance['NomENS']." ".$infoSeance['PrenomENS'];
-    $matiere = $infoSeance['title'];
-    $td = $infoSeance['groupe'];
-    $salle = $infoSeance['NomS'];
+    $formation = $infoSeance[0]['IntituleF'];
+    $date = date("d/m/Y", strtotime($infoSeance[0]['DateDebutSeance']));
+    $debut = date("H:i", strtotime($infoSeance[0]['DateDebutSeance']));
+    $fin = date("H:i", strtotime($infoSeance[0]['DateFinSeance']));
+    $enseignant = $infoSeance[0]['NomENS']." ".$infoSeance[0]['PrenomENS'];
+    $matiere = $infoSeance[0]['title'];
+    $td = $infoSeance[0]['groupe'];
+    $salle = $infoSeance[0]['NomS'];
     $action = $formation." - ".$td." - ".$matiere." - ".$enseignant." le : ".$date." de : "
         .$debut." à ".$fin." dans la salle : ".$salle;
     writeLog('Supprimer la séance : ', $action, '../../Logs/');

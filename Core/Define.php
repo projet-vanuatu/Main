@@ -6,4 +6,4 @@
 define("AUTH", "Authentification");
 define("ADMIN", "Administrateur");
 define("GEST", "Gestionnaire");
-define ("TIMEZONE", "Europe/Paris");
+define ("TIMEZONE", "UTC+11");
